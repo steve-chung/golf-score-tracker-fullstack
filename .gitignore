@@ -1,0 +1,6 @@
+*.pyc
+package-lock.json
+node_modules
+.DS_Store
+.client/public/main.js
+.client/public/main.js.map
