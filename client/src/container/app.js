@@ -1,16 +1,47 @@
 import React from 'react'
 import { BrowserRouter as Router } from 'react-router-dom'
 import Main from './main'
+import { Provider } from 'react-redux'
+import { configureStore } from '../store'
+import { setAuthorizationToken, setCurrentUser, isExpired } from '../store/action/auth'
 import Navbar from '../container/navbar'
+import jwtDecode from 'jwt-decode'
+import Cookies from 'universal-cookie'
+
+const store = configureStore()
+const cookies = new Cookies()
+
+function setTokenHeader(token) {
+  if (token) {
+    setAuthorizationToken(token)
+    // prevent someone from manually tampering with the key of jwtToken in localStorage
+    try {
+      store.dispatch(setCurrentUser(jwtDecode(token)))
+    } catch (e) {
+      store.dispatch(setCurrentUser({}))
+    }
+  }
+}
+
+store.dispatch(isExpired())
+const Expired = store.getState().currentUser.isExpired
+console.log(Expired)
+if (!isExpired) {
+  setTokenHeader(cookies.get('accessToken'))
+} else {
+  setTokenHeader(cookies.get('refreshToken'))
+  }
 
 const App = () => (
 
-  <Router>
-    <div className="onboarding">
-      <Navbar/>
-      <Main />
-    </div>
-  </Router>
+  <Provider store={store}>
+    <Router>
+      <div className="onboarding">
+        <Navbar/>
+        <Main />
+      </div>
+    </Router>
+  </Provider>
 
 )
 

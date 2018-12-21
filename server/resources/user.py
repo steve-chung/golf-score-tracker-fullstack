@@ -21,7 +21,8 @@ parser.add_argument(
   'name', help='This field cannot be blank')
 
 expire_time = datetime.timedelta(hours=3)
-mill_time = expire_time.total_seconds()*1000
+mill_time = float(expire_time.total_seconds()*1000)
+expire_date = datetime.datetime.now().second*1000 + mill_time
 class UserRegister(Resource):
   def post(self):
     data = parser.parse_args()
@@ -43,7 +44,7 @@ class UserRegister(Resource):
         'username': data['name'],
         'accessToken': access_token,
         'refreshTtoken': refresh_token,
-        'expire': mill_time
+        'expire': expire_date
       }
     except:
       return {"message": "Something went wrong"}, 500
@@ -66,7 +67,7 @@ class UserLogin(Resource):
         'name': current_user.name,
         'accessToken': access_token,
         'refreshTtoken': refresh_token,
-        'expire': mill_time
+        'expire': expire_date
       }
     else:
        return {'message': 'Wrong credentials'}

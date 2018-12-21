@@ -1,13 +1,13 @@
 from flask_restful import Resource, reqparse
 from flask import jsonify
-from flask_jwt_extended import get_jwt_identity,  jwt_required
+from flask_jwt_extended import get_jwt_identity, jwt_refresh_token_required
 from models.user import UserModel
 from models.games import GameModel
 from ast import literal_eval
 
 class PlayGame(Resource):
 
-  @jwt_required
+  @jwt_refresh_token_required
   def get(self):
     user_email = get_jwt_identity()
     user = UserModel.find_by_email(user_email)

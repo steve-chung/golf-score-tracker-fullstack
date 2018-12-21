@@ -1,5 +1,5 @@
 
-from flask import Flask, jsonify, request, make_response
+from flask import Flask, jsonify, request, render_template
 from flask_sqlalchemy import get_debug_queries
 from db import db
 from flask_restful import Api
@@ -141,23 +141,23 @@ def yelp_get_data():
         return jsonify(response)
     return server_error()
 
-api.add_resource(UserRegister, '/register')
-api.add_resource(UserLogin, '/login')
-api.add_resource(TokenRefresh, '/refresh')
-api.add_resource(UserLogout, '/logout')
-api.add_resource(reserveCourse, '/reserve')
-api.add_resource(createHoles, '/holes')
-api.add_resource(PlayGame, '/playGame')
-api.add_resource(StatPost, '/stat')
-api.add_resource(Stat, '/stat/<int:stat_id>')
-api.add_resource(StatView, '/stat/view/<int:user_id>')
+api.add_resource(UserRegister, '/api/auth/register')
+api.add_resource(UserLogin, '/api/auth/login')
+api.add_resource(TokenRefresh, '/api/auth/refresh')
+api.add_resource(UserLogout, '/api/auth/logout')
+api.add_resource(reserveCourse, '/api/reserve')
+api.add_resource(createHoles, '/api/holes')
+api.add_resource(PlayGame, '/api/playGame')
+api.add_resource(StatPost, '/api/stat')
+api.add_resource(Stat, '/api/stat/<int:stat_id>')
+api.add_resource(StatView, '/api/stat/view/<int:user_id>')
 app.after_request(sql_debug)
 
 
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
-    return make_response('index.html')
+    return render_template('../client/srcindex.html')
 
 if __name__ == '__main__':
     from db import db

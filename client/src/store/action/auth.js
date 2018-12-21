@@ -1,8 +1,7 @@
-import { apiCall, setTokenHeader } from "../../services/api";
-import { SET_CURRENT_USER } from "../actionTypes";
-import { addError, removeError } from "./errors";
+import { apiCall, setTokenHeader } from '../../services/api'
+import { SET_CURRENT_USER, SET_IS_EXPIRED } from '../actionTypes'
+import { addError, removeError } from './errors'
 import Cookies from 'universal-cookie'
-import { access } from "fs";
 
 const cookies = new Cookies()
 
@@ -10,6 +9,13 @@ export function setCurrentUser(user) {
   return {
     type: SET_CURRENT_USER,
     user
+  }
+}
+
+export function setIsExpired(isExpired) {
+  return {
+    type: SET_IS_EXPIRED,
+    isExpired
   }
 }
 
@@ -33,11 +39,19 @@ export function authUser(type, userData) {
     return new Promise((resolve, reject) => {
       return apiCall('post', `/api/auth/${type}`, userData)
         .then(({ accessToken, refreshToken, expire, username }) => {
-          cookies.set('accessToken', accessToken)
-          cookies.set('refreshToken', refreshToken)
-          cookies.set('expire', expire)
-          setAuthorizationToken(accessToken)
-          dispatch(setCurrentUser(username))
+          let fresh = false
+          cookies.set('accessToken', accessToken, {httpOnly: true})
+          cookies.set('refreshToken', refreshToken, {httpOnly: true})
+          cookies.set('expire', expire, {httpOnly: true})
+          if ((type === 'register') || (type === 'login')) {
+             fresh = true
+          }
+          if (type !== 'refresh') {
+            setAuthorizationToken(accessToken)
+          } else {
+            setAuthorizationToken(refreshToken)
+          }
+          dispatch(setCurrentUser({username, fresh, expired: false}))
           dispatch(removeError())
           resolve() // indicate that the API call succeeded
         })
@@ -48,3 +62,12 @@ export function authUser(type, userData) {
   }
 }
 
+export function isExpired() {
+  return dispatch =>
+  { 
+    const expire = cookies.get('expire')
+    if (+expire < Date.now()) {
+      dispatch(setIsExpired({expired: true}))
+    }
+  }
+}
