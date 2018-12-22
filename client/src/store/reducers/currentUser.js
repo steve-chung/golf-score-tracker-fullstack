@@ -1,4 +1,4 @@
-import { SET_CURRENT_USER, SET_IS_EXPIRED } from '../actionTypes'
+import { SET_CURRENT_USER, SET_IS_EXPIRED, SET_CURRENT_USER_DEFAULT } from '../actionTypes'
 
 const DEFAULT_STATE = {
   isAuthenticated: false, // hopefully be true, when logged in
@@ -22,6 +22,16 @@ export default (state = DEFAULT_STATE, action) => {
     case SET_IS_EXPIRED:
       return {
         isExpired: action.expired
+      }
+    case SET_CURRENT_USER_DEFAULT:
+      return {
+        isAuthenticated: false, // hopefully be true, when logged in
+        isFresh: false,
+        isExpired: false,
+        user: {
+          username: '',
+          id: 0
+        } // all the user info when logged in
       }
     default:
       return state

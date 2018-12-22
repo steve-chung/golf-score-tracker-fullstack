@@ -90,8 +90,8 @@ class Navbar extends Component {
                Golf Score Tracker
               </Link>
               {this.props.currentUser.isAuthenticated ? (
-                <Link to='/login' style={{textDecoration: 'none', color: 'white'}}
-                 onClick = {this.logout}>
+                <Link to='/' style={{textDecoration: 'none', color: 'white'}}
+                 onClick = {this.props.logout}>
                 Log out
                 </Link>
                 ) : (

@@ -1,5 +1,10 @@
 import { apiCall, setTokenHeader } from '../../services/api'
-import { SET_CURRENT_USER, SET_IS_EXPIRED } from '../actionTypes'
+import {
+  SET_CURRENT_USER,
+  SET_IS_EXPIRED,
+  SET_MESSAGE,
+  SET_CURRENT_USER_DEFAULT
+} from '../actionTypes'
 import { addError, removeError } from './errors'
 import Cookies from 'universal-cookie'
 
@@ -9,6 +14,18 @@ export function setCurrentUser(user) {
   return {
     type: SET_CURRENT_USER,
     user
+  }
+}
+
+export function setCurrentUserDefault() {
+  return {
+    type: SET_CURRENT_USER_DEFAULT
+  }
+}
+export function setMessage(message) {
+  return {
+    type: SET_MESSAGE,
+    message
   }
 }
 
@@ -25,11 +42,21 @@ export function setAuthorizationToken(token) {
 
 export function logout() {
   return dispatch => {
-    // localStorage.clear()
-    cookies.remove('accessToken', {httpOnly: true})
-    cookies.remove('refreshToken', {httpOnly: true})
-    setAuthorizationToken(false, false)
-    dispatch(setCurrentUser({}))
+    return new Promise((resolve, reject) => {
+      return apiCall('post', '/api/auth/logout')
+        .then(({ message }) => {
+          console.log(message)
+          // localStorage.clear()
+          cookies.remove('accessToken', {httpOnly: true})
+          cookies.remove('refreshToken', {httpOnly: true})
+          setAuthorizationToken(false, false)
+          dispatch(setCurrentUserDefault())
+          dispatch(setMessage(message))
+        })
+        .catch(err => {
+          dispatch(addError(err.message))
+        })
+    })
   }
 }
 
