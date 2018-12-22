@@ -42,8 +42,9 @@ class UserRegister(Resource):
       return {
         'message':'User {} was created'.format(data['name']),
         'username': data['name'],
+        'id': new_user.id,
         'accessToken': access_token,
-        'refreshTtoken': refresh_token,
+        'refreshToken': refresh_token,
         'expire': expire_date
       }
     except:
@@ -64,9 +65,10 @@ class UserLogin(Resource):
       
       return {
         'message': 'Logged in as {}'.format(current_user.name),
-        'name': current_user.name,
+        'username': current_user.name,
+        'id': current_user.id,
         'accessToken': access_token,
-        'refreshTtoken': refresh_token,
+        'refreshToken': refresh_token,
         'expire': expire_date
       }
     else:

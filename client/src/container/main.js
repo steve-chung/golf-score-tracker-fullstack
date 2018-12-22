@@ -5,6 +5,10 @@ import Invite from './invite'
 import Scores from './score'
 import History from './history'
 import Performance from './performance'
+import AuthForm from '../component/authForm'
+import { connect } from 'react-redux'
+import { authUser } from '../store/action/auth'
+import { removeError } from '../store/action/errors'
 
 class Main extends Component {
   constructor(props) {
@@ -22,24 +26,65 @@ class Main extends Component {
   }
   render() {
     const { courseName } = this.state
+    const { authUser, errors, removeError, currentUser } = this.props
     return (
       <div className="container">
         <Switch>
           <Route
-            exact path="/"
+            exact path='/'
             render={() =>
               <Home handleCourseName={this.handleCourseName}
-                {...this.props} />}/>
-          <Route path="/invite" render={props =>
+                currentUser = {currentUser} {...this.props} />}/>
+          <Route path="/invite" render={() =>
             <Invite smallWindows={!window.matchMedia('(min-width: 500px)').matches}
               courseName = {courseName} {...this.props} />}/>
           <Route path='/scores' component={Scores}/>
           <Route path='/history' component={History}/>
           <Route path='/performance' component={Performance}/>
-          <Redirect to="/"/>
+          <Route
+            exact
+            path='/login'
+            render={() => {
+              return (
+                <AuthForm
+                  removeError={removeError}
+                  errors={errors}
+                  onAuth={authUser}
+                  buttonText='Log in'
+                  heading='Welcome Back.'
+                  {...this.props}
+                />
+              )
+          }} />
+          <Route
+            exact
+            path='/register'
+            render={() => {
+              return (
+                <AuthForm
+                  removeError={removeError}
+                  errors={errors}
+                  onAuth={authUser}
+                  signUp
+                  buttonText='Sign me up!'
+                  heading='Join Golf Score Tracker Today!!'
+                  {...this.props}
+                />
+              )
+            }}/>
+          <Redirect to='/'/>
         </Switch>
       </div>
     )
   }
 }
-export default withRouter(Main)
+
+function mapStateToProps(state) {
+  return {
+    currentUser: state.currentUser,
+    errors: state.errors
+  }
+}
+export default withRouter(connect(mapStateToProps, 
+                          { authUser, removeError})(Main))
+

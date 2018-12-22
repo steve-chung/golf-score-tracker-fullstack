@@ -38,7 +38,7 @@ export function authUser(type, userData) {
     // wrap our thunk in a promise so we can wait for the API call
     return new Promise((resolve, reject) => {
       return apiCall('post', `/api/auth/${type}`, userData)
-        .then(({ accessToken, refreshToken, expire, username }) => {
+        .then(({ accessToken, refreshToken, expire, ...user }) => {
           let fresh = false
           cookies.set('accessToken', accessToken, {httpOnly: true})
           cookies.set('refreshToken', refreshToken, {httpOnly: true})
@@ -51,7 +51,7 @@ export function authUser(type, userData) {
           } else {
             setAuthorizationToken(refreshToken)
           }
-          dispatch(setCurrentUser({username, fresh, expired: false}))
+          dispatch(setCurrentUser({user, fresh, expired: false}))
           dispatch(removeError())
           resolve() // indicate that the API call succeeded
         })

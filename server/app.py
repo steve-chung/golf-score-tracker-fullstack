@@ -157,7 +157,7 @@ app.after_request(sql_debug)
 @app.route('/', defaults={'path': ''})
 @app.route('/<path:path>')
 def index(path):
-    return render_template('../client/srcindex.html')
+    return render_template('index.html')
 
 if __name__ == '__main__':
     from db import db

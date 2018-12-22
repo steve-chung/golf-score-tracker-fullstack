@@ -12,6 +12,9 @@ import {AppBar,
 } from '@material-ui/core'
 import MenuIcon from '@material-ui/icons/Menu'
 import { withStyles } from '@material-ui/core/styles'
+import { compose } from 'recompose'
+import { logout } from '../store/action/auth'
+import { connect } from 'react-redux'
 
 const styles = theme => ({
   root: {
@@ -86,6 +89,22 @@ class Navbar extends Component {
               <Link to='/' style={{textDecoration: 'none', color: 'white'}}>
                Golf Score Tracker
               </Link>
+              {this.props.currentUser.isAuthenticated ? (
+                <Link to='/login' style={{textDecoration: 'none', color: 'white'}}
+                 onClick = {this.logout}>
+                Log out
+                </Link>
+                ) : (
+                  <span>
+                    <Link to='/register' style={{textDecoration: 'none', color: 'white'}} >
+                      Sign up
+                    </Link>
+                    <Link to='/login' style={{textDecoration: 'none', color: 'white'}} >
+                      Login
+                    </Link>
+                  </span>
+               
+                )}
             </Typography>
           </Toolbar>
         </AppBar>
@@ -97,4 +116,13 @@ class Navbar extends Component {
 
 }
 
-export default withStyles(styles)(Navbar)
+function mapStateToProps(state) {
+  return {
+    currentUser: state.currentUser
+  };
+}
+
+export default compose(withStyles(styles), 
+    connect(mapStateToProps, {
+    logout
+    }))(Navbar)
