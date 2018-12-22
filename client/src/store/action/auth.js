@@ -54,7 +54,11 @@ export function logout() {
           dispatch(setMessage(message))
         })
         .catch(err => {
-          dispatch(addError(err.message))
+          dispatch(addError({
+            message: err.data.message,
+            code: err.status
+          }))
+          dispatch(addError(err))
         })
     })
   }
@@ -84,7 +88,7 @@ export function authUser(type, userData) {
         })
         .catch((err) => {
           console.log(err)
-          dispatch(addError(err.message))
+          dispatch(addError({message: err.data.message, code: err.status}))
         })
     })
   }
