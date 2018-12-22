@@ -82,7 +82,8 @@ export function authUser(type, userData) {
           dispatch(removeError())
           resolve() // indicate that the API call succeeded
         })
-        .catch(err => {
+        .catch((err) => {
+          console.log(err)
           dispatch(addError(err.message))
         })
     })

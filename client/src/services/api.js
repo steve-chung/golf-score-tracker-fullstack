@@ -15,7 +15,7 @@ export function apiCall(method, path, data, header) {
         return resolve(res.data)
       })
       .catch(err => {
-        return reject(err.response.data.error)
+        return reject(err.response.data)
       })
   })
 }
