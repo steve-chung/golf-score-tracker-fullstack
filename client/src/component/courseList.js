@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { CardContent, Typography, Card, Button } from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
+import { compose } from 'recompose'
+import { connect } from 'react-redux'
 
 const styles = {
   card: {
@@ -29,6 +31,7 @@ class CourseList extends Component {
 
   render() {
     const { classes } = this.props
+    const { isAuthenticated } = this.props.currentUser
     const courses = this.props.courses.map((list) => (
       <Card className={classes.card} key={list.id}>
         <CardContent>
@@ -46,11 +49,10 @@ class CourseList extends Component {
           </Typography>
           <Typography>
             Distance: {list.distance} mi
-            <Button variant='contained' color='primary' className={classes.button} onClick={() => this.handleChoose(list.id)}>
+            { isAuthenticated && (<Button variant='contained' color='primary' className={classes.button} onClick={() => this.handleChoose(list.id)}>
               Choose
-            </Button>
+            </Button>)}
           </Typography>
-
         </CardContent>
       </Card>
     ))
@@ -64,4 +66,11 @@ class CourseList extends Component {
 
 }
 
-export default withStyles(styles)(CourseList)
+function mapStateToProps(state) {
+  return {
+    currentUser: state.currentUser
+  }
+}
+
+export default compose(withStyles(styles),
+  connect(mapStateToProps))(CourseList)
