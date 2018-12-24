@@ -23,6 +23,7 @@ parser.add_argument(
 expire_time = datetime.timedelta(hours=3)
 mill_time = float(expire_time.total_seconds()*1000)
 expire_date = datetime.datetime.now().second*1000 + mill_time
+
 class UserRegister(Resource):
   def post(self):
     data = parser.parse_args()
@@ -47,7 +48,8 @@ class UserRegister(Resource):
         'refreshToken': refresh_token,
         'expire': expire_date
       }
-    except:
+    except Exception as e:
+      print(e)
       return {"message": "Something went wrong"}, 500
 
 

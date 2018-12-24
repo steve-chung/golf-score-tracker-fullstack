@@ -83,6 +83,7 @@ export function authUser(type, userData) {
             setAuthorizationToken(refreshToken)
           }
           dispatch(setCurrentUser({user, fresh, expired: false}))
+          console.log('here')
           dispatch(removeError())
           resolve() // indicate that the API call succeeded
         })

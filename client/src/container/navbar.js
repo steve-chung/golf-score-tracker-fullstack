@@ -90,16 +90,16 @@ class Navbar extends Component {
                Golf Score Tracker
               </Link>
               {this.props.currentUser.isAuthenticated ? (
-                <Link to='/' style={{textDecoration: 'none', color: 'white'}}
+                <Link to='/' style={{textDecoration: 'none', color: 'white', float: 'right'}}
                  onClick = {this.props.logout}>
                 Log out
                 </Link>
                 ) : (
                   <span>
-                    <Link to='/register' style={{textDecoration: 'none', color: 'white'}} >
+                    <Link to='/register' style={{textDecoration: 'none', color: 'white', float: 'right'}} >
                       Sign up
                     </Link>
-                    <Link to='/login' style={{textDecoration: 'none', color: 'white'}} >
+                    <Link to='/login' style={{textDecoration: 'none', color: 'white', float: 'right', paddingRight:'1rem'}} >
                       Login
                     </Link>
                   </span>

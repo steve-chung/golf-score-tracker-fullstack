@@ -65,7 +65,7 @@ class Main extends Component {
                   removeError={removeError}
                   errors={errors}
                   onAuth={authUser}
-                  signUp
+                  register
                   buttonText='Sign me up!'
                   heading='Join Golf Score Tracker Today!!'
                   {...this.props}
