@@ -45,7 +45,8 @@ class Navbar extends Component {
   }
 
   render() {
-    const {classes} = this.props
+    const { classes } = this.props
+    const { isAuthenticated } = this.props.currentUser
 
     const list =
       <div className={classes.list}>
@@ -54,18 +55,20 @@ class Navbar extends Component {
             <Link to='/'><ListItemText primary={'Home'}/></Link>
           </ListItem>
           <Divider/>
-          <ListItem>
-            <Link to='/history'><ListItemText primary={'History'}/></Link>
-          </ListItem>
-          <Divider/>
-          <ListItem>
-            <Link to='/scores'><ListItemText primary={'Play Game'}/></Link>
-          </ListItem>
-          <Divider/>
-          <ListItem>
-            <Link to='/performance'><ListItemText primary={'Performance'}/></Link>
-          </ListItem>
-          <Divider/>
+          { isAuthenticated && (<div>
+            <ListItem>
+              <Link to='/history'><ListItemText primary={'History'}/></Link>
+            </ListItem>
+            <Divider/>
+            <ListItem>
+              <Link to='/scores'><ListItemText primary={'Play Game'}/></Link>
+            </ListItem>
+            <Divider/>
+            <ListItem>
+              <Link to='/performance'><ListItemText primary={'Performance'}/></Link>
+            </ListItem>
+            <Divider/>
+          </div>)}
         </List>
       </div>
 
@@ -119,7 +122,7 @@ class Navbar extends Component {
 function mapStateToProps(state) {
   return {
     currentUser: state.currentUser
-  };
+  }
 }
 
 export default compose(withStyles(styles), 
