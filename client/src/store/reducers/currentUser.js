@@ -11,7 +11,7 @@ export default (state = DEFAULT_STATE, action) => {
   console.log(action)
   switch (action.type) {
     case SET_CURRENT_USER:
-      return {
+      return{
         // turn empty object into false or if there are keys, true
         isAuthenticated: !!Object.keys(action.user.user.username).length,
         isFresh: action.user.fresh,
@@ -20,9 +20,9 @@ export default (state = DEFAULT_STATE, action) => {
         isExpired: action.user.expired
       }
     case SET_IS_EXPIRED:
-      return {
+      return Object.assign({}, state, {
         isExpired: action.expired
-      }
+      })
     case SET_CURRENT_USER_DEFAULT:
       return {
         isAuthenticated: false, // hopefully be true, when logged in
