@@ -1,0 +1,21 @@
+version: 0.0
+os: linux
+files:
+  - source: /
+    destination: /home/ec2-user/project
+hooks:
+  AfterInstall:
+    - location: /scripts/install_dependencies.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: /scripts/start_server.sh
+      timeout: 300
+      runas: root
+    - location: /scripts/start_client.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: /scripts/stop_server.sh
+      timeout: 300
+      runas: root
