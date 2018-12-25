@@ -10,6 +10,7 @@ import {AppBar,
   Divider,
   ListItemText
 } from '@material-ui/core'
+import PermIdentityIcon from '@material-ui/icons/PermIdentity'
 import MenuIcon from '@material-ui/icons/Menu'
 import { withStyles } from '@material-ui/core/styles'
 import { compose } from 'recompose'
@@ -26,7 +27,14 @@ const styles = theme => ({
   menuButton: {
     marginLeft: -12,
     marginRight: 20
-  }
+  },
+  icon: {
+    
+    display: 'inline',
+    verticalAlign: 'middle',
+    paddingRight: '5px',
+    
+  },
 })
 
 class Navbar extends Component {
@@ -46,7 +54,8 @@ class Navbar extends Component {
 
   render() {
     const { classes } = this.props
-    const { isAuthenticated } = this.props.currentUser
+    const { isAuthenticated, user } = this.props.currentUser
+
 
     const list =
       <div className={classes.list}>
@@ -93,10 +102,15 @@ class Navbar extends Component {
                Golf Score Tracker
               </Link>
               {this.props.currentUser.isAuthenticated ? (
-                <Link to='/' style={{textDecoration: 'none', color: 'white', float: 'right'}}
-                 onClick = {this.props.logout}>
-                Log out
+                <div style={{display:'inline', float:'right'}}>
+                  <PermIdentityIcon className={classes.icon} style={{display:'inline'}}/>
+                  <span style={{paddingRight: '10px'}}>Hello, {user.username}!</span>
+                  <Link to='/' style={{textDecoration: 'none', color: 'white'}}     
+                    onClick = {this.props.logout}>
+                    Log out
                 </Link>
+              </div>
+                
                 ) : (
                   <span>
                     <Link to='/register' style={{textDecoration: 'none', color: 'white', float: 'right'}} >
