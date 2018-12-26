@@ -17,8 +17,8 @@ function requestMiddleware({dispatch, getState}) {
         setTokenHeader(refresh_token)
         apiCall('POST', '/api/auth/refresh')
           .then(
-            (refreshToken) => {
-              cookies.set('refreshToken', refreshToken, {
+            ({accessToken}) => {
+              cookies.set('accessToken', accessToken, {
                 httpOnly: true
               })
               return next(action)

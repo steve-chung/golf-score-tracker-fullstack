@@ -2,10 +2,10 @@ import { apiCall, setTokenHeader } from '../../services/api'
 import {
   SET_CURRENT_USER,
   SET_IS_EXPIRED,
-  SET_MESSAGE,
   SET_CURRENT_USER_DEFAULT
 } from '../actionTypes'
 import { addError, removeError } from './errors'
+import { setMessage } from './message'
 import Cookies from 'universal-cookie'
 
 const cookies = new Cookies()
@@ -22,12 +22,7 @@ export function setCurrentUserDefault() {
     type: SET_CURRENT_USER_DEFAULT
   }
 }
-export function setMessage(message) {
-  return {
-    type: SET_MESSAGE,
-    message
-  }
-}
+
 
 export function setIsExpired(isExpired) {
   return {
@@ -45,7 +40,6 @@ export function logout() {
     return new Promise((resolve, reject) => {
       return apiCall('post', '/api/auth/logout')
         .then(({ message }) => {
-          console.log(message)
           // localStorage.clear()
           cookies.remove('accessToken', {httpOnly: true})
           cookies.remove('refreshToken', {httpOnly: true})

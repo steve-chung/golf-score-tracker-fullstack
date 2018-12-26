@@ -52,7 +52,8 @@ class reserveCourse(Resource):
         db.session.commit()
       
       return {
-        'message': 'Course {} was scheduled for {}'.format(data['course'], data['date'])
+        'message': 'Course {} was scheduled for {}'.format(data['course'], data['date']),
+        'id': new_games.id
       }, 200
 
     except Exception as e:

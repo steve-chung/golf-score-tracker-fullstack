@@ -173,7 +173,7 @@ class Invite extends Component {
     const { open, players } = this.state
     const date = getDate()
     return (
-      <div className='container' style={{width: '80%', margin: 'auto'}}>
+      <div className='container' style={{width: '70%', margin: 'auto'}}>
         <h1 className='title'>Invite to Play</h1>
         <p className='invite'> Please invite friends to play at {courseName} </p>
         <div className={classes.date}>
@@ -238,7 +238,7 @@ class Invite extends Component {
                 autoFocus
                 margin='dense'
                 id='email'
-                label='Player Name'
+                label='Player Email'
                 type='email'
                 fullWidth/>
             </DialogContent>
