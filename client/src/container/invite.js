@@ -10,6 +10,13 @@ import {
   Slide} from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import FriendsTable from '../component/friendsTable'
+import { connect } from 'react-redux'
+import { updateGame,
+        removeGame,
+        addGame,
+        updateLastId,
+        deleteId } from '../store/action/game'
+import { compose } from 'recompose'
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
@@ -76,28 +83,28 @@ class Invite extends Component {
   }
 
   handleSelectDelete(id) {
-    this.setState({
-      deletePlayerId: id
-    })
+    // this.setState({
+    //   deletePlayerId: id
+    // })
+    deleteId(id)
 
   }
 
   handleClickDelete() {
-    const { players, deletePlayerId } = this.state
-    let newPlayers = players.map((player) => {
-      return Object.assign({}, player)
-    }).filter((player) => (
-      player.id !== deletePlayerId
-    ))
-    this.setState({
-      players: newPlayers
-    })
-
+    // const { players, deletePlayerId } = this.state
+    // let newPlayers = players.map((player) => {
+    //   return Object.assign({}, player)
+    // }).filter((player) => (
+    //   player.id !== deletePlayerId
+    // ))
+    // this.setState({
+    //   players: newPlayers
+    // })
+    removeGame()
   }
 
   handleSubmit() {
-    const {players, scheduledDate} = this.state
-
+    const {players, scheduledDate} = this.props.games
     const {courseName} = this.props
     const date = Date.parse(scheduledDate)
     const newData = {
@@ -107,18 +114,19 @@ class Invite extends Component {
       totalScores: 0
     }
     if (players.length !== 0) {
-      fetch(`/data/games`, {method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(newData)})
-        .then(res => {
-          console.log(res)
-        })
-        .catch(err => {
-          console.error(err)
-        })
+      updateGame(newData)
+      // fetch(`/data/games`, {method: 'POST',
+      //   headers: {
+      //     'Accept': 'application/json',
+      //     'Content-Type': 'application/json'
+      //   },
+      //   body: JSON.stringify(newData)})
+      //   .then(res => {
+      //     console.log(res)
+      //   })
+      //   .catch(err => {
+      //     console.error(err)
+      //   })
 
       this.props.history.push('/')
     }
@@ -126,6 +134,7 @@ class Invite extends Component {
       alert('please add players')
     }
   }
+
   handleCancel(e) {
     this.setState({
       open: false
@@ -134,43 +143,49 @@ class Invite extends Component {
 
   handleDate(e) {
     const date = e.target.value + ':00'
-    console.log(date)
     this.setState({
       scheduledDate: date
     })
   }
 
   handleClose(e) {
-    e.preventDefault()
+    e.preventDefault(this.props)
     if (typeof (e.target[0].value) !== 'string') {
       this.setState({
         open: false
       })
     }
     else {
-      const { players, lastId } = this.state
+      console.log(this.props)
+      const { lastId } = this.props.games
       const playerInfo = {
         id: lastId,
         name: e.target[0].value,
         avgScore: +e.target[1].value,
         email: e.target[2].value
       }
-      const newPlayer = players.map((player) => {
-        return Object.assign({}, player)
-      })
+
+      // const newPlayer = players.map((player) => {
+      //   return Object.assign({}, player)
+      // })
+      console.log(playerInfo)
+      this.props.addGame(playerInfo)
+      this.props.updateLastId()
+      console.log(this.props.games)
       this.setState({
-        open: false,
-        players: [...newPlayer, playerInfo],
-        lastId: lastId + 1
+        open: false
+        // players: [...newPlayer, playerInfo],
+        // lastId: lastId + 1
       })
     }
     e.target.reset()
   }
 
   render() {
-    const { courseName } = this.props
-    const { classes, smallWindows } = this.props
-    const { open, players } = this.state
+    const { classes, smallWindows, courseName } = this.props
+    const { open } = this.state
+    console.log(this.props)
+    const { players } = this.props.games
     const date = getDate()
     return (
       <div className='container' style={{width: '70%', margin: 'auto'}}>
@@ -263,4 +278,13 @@ class Invite extends Component {
   }
 }
 
-export default withStyles(styles)(Invite)
+function mapStateToProps(state) {
+  return {
+    message: state.message,
+    games: state.game
+  }
+}
+
+export default compose(withStyles(styles),
+              connect(mapStateToProps, {
+              updateGame, removeGame, addGame, deleteId, updateLastId }))(Invite)

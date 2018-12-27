@@ -14,5 +14,7 @@ export default (state = DEFAULT_STATE, action) => {
       return {
         message: ''
       }
+    default:
+      return state
   }
 }
