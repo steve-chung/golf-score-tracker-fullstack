@@ -25,6 +25,7 @@ export function updateLastId() {
 }
 
 export function deleteId(id) {
+  console.log(id)
   return {
     type: UPDATE_DELETE_ID,
     id

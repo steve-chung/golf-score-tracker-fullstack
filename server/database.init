@@ -1,6 +1,6 @@
 [postgresql]
 user=postgres
-password=nameeh74
+password=nameeh
 host=localhost
 port=5432
 database=golf-score-tracker

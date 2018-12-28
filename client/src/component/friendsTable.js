@@ -12,7 +12,7 @@ import {
   ListItemText,
   Collapse,
   Divider,
-  Checkbox
+  Checkbox,
 } from '@material-ui/core'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { withStyles } from '@material-ui/core/styles'
@@ -75,8 +75,10 @@ class FriendsTable extends Component {
     this.handleClick = this.handleClick.bind(this)
   }
 
-  handleClick(i) {
+  handleClick(e) {
     const {open} = this.state
+    console.log(e.target)
+    const  i = +e.target.value
     let newOpen = {}
     if (open[i] === undefined) {
       newOpen = Object.assign(open, {[i]: false})
@@ -92,6 +94,7 @@ class FriendsTable extends Component {
         newOpen[key] = false
       }
     }
+    console.log(i)
     if (newOpen[i]) {
       this.props.handleDelete(i)
     }
@@ -103,6 +106,8 @@ class FriendsTable extends Component {
   render() {
     const { classes } = this.props
     const { smallWindows, players } = this.props
+    console.log(this.props)
+    console.log(this.state)
     const displayTable = () => {
       return (
         <Paper>
@@ -130,9 +135,10 @@ class FriendsTable extends Component {
       <TableRow className={classes.row}
         key={player.id}
         role='checkbox'
-        onClick={() => this.handleClick(player.id)}>
+        >
         <CustomTableCell component='th' scope='row'>
-          <Checkbox checked={this.state.open[player.id]} />
+          <Checkbox checked={player.id ? this.state.open[player.id]: false} 
+          onChange={(e) => this.handleClick(e)} value={player.id.toString()}/>
           {player.name}
         </CustomTableCell>
         <CustomTableCell >
@@ -149,7 +155,7 @@ class FriendsTable extends Component {
       return (
         <div className={classes.list} key={player.id}>
           <List component='nav' >
-            <ListItem button onClick={() => this.handleClick(player.id)}>
+            <ListItem button onChange={() => this.handleClick(player.id)}>
               <Checkbox checked={this.state.open[player.id]} />
               <ListItemText primary={player.name} />
               {this.state.open[player.id] ? <ExpandLess /> : <ExpandMore />}

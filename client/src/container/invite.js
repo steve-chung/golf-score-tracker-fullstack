@@ -86,7 +86,8 @@ class Invite extends Component {
     // this.setState({
     //   deletePlayerId: id
     // })
-    deleteId(id)
+    console.log(id)
+    this.props.deleteId(id)
 
   }
 
@@ -100,7 +101,7 @@ class Invite extends Component {
     // this.setState({
     //   players: newPlayers
     // })
-    removeGame()
+    this.props.removeGame()
   }
 
   handleSubmit() {
@@ -114,7 +115,7 @@ class Invite extends Component {
       totalScores: 0
     }
     if (players.length !== 0) {
-      updateGame(newData)
+      this.props.updateGame(newData)
       // fetch(`/data/games`, {method: 'POST',
       //   headers: {
       //     'Accept': 'application/json',
