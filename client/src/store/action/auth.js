@@ -7,7 +7,7 @@ import {
 import { addError, removeError } from './errors'
 import { setMessage } from './message'
 import Cookies from 'universal-cookie'
-
+import jwtDecode from 'jwt-decode'
 const cookies = new Cookies()
 
 export function setCurrentUser(user) {
@@ -41,8 +41,8 @@ export function logout() {
       return apiCall('post', '/api/auth/logout')
         .then(({ message }) => {
           // localStorage.clear()
-          cookies.remove('accessToken', {httpOnly: true})
-          cookies.remove('refreshToken', {httpOnly: true})
+          cookies.remove('accessToken')
+          cookies.remove('refreshToken')
           setAuthorizationToken(false, false)
           dispatch(setCurrentUserDefault())
           dispatch(setMessage(message))
@@ -61,24 +61,23 @@ export function logout() {
 export function authUser(type, userData) {
   return dispatch => {
     // wrap our thunk in a promise so we can wait for the API call
+    if ( type === 'refresh') {
+      const refresh_token = cookies.get('refreshToken')
+      setAuthorizationToken(refresh_token)
+    }
     return new Promise((resolve, reject) => {
       return apiCall('post', `/api/auth/${type}`, userData)
-        .then(({ accessToken, refreshToken, expire, ...user }) => {
+        .then(({ accessToken, refreshToken, ...user }) => {
           let fresh = false
-          cookies.set('accessToken', accessToken, {httpOnly: true})
-          cookies.set('refreshToken', refreshToken, {httpOnly: true})
-          cookies.set('expire', expire, {httpOnly: true})
+          const expire = jwtDecode(accessToken).exp
+          cookies.set('accessToken', accessToken)
+          cookies.set('refreshToken', refreshToken)
+          cookies.set('expire', expire)
           if ((type === 'register') || (type === 'login')) {
              fresh = true
           }
-          if (type !== 'refresh') {
-            setAuthorizationToken(accessToken)
-          } else {
-            setAuthorizationToken(refreshToken)
-          }
+          setAuthorizationToken(accessToken)
           dispatch(setCurrentUser({user, fresh, expired: false}))
-          console.log('here')
-          dispatch(removeError())
           resolve() // indicate that the API call succeeded
         })
         .catch((err) => {

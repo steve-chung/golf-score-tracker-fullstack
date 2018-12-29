@@ -81,14 +81,12 @@ class AuthForm extends Component {
       heading,
       buttonText,
       errors,
-      history,
       register,
-      removeError,
       classes
     } = this.props
-    history.listen(() => {
-      removeError()
-    })
+    // history.listen(() => {
+    //   removeError()
+    // })
 
     return (
       <main className={classes.main}>

@@ -12,7 +12,7 @@ import {
   ListItemText,
   Collapse,
   Divider,
-  Checkbox
+  Checkbox,
 } from '@material-ui/core'
 import { ExpandLess, ExpandMore } from '@material-ui/icons'
 import { withStyles } from '@material-ui/core/styles'
@@ -75,8 +75,9 @@ class FriendsTable extends Component {
     this.handleClick = this.handleClick.bind(this)
   }
 
-  handleClick(i) {
+  handleClick(e) {
     const {open} = this.state
+    const  i = +e.target.value
     let newOpen = {}
     if (open[i] === undefined) {
       newOpen = Object.assign(open, {[i]: false})
@@ -130,9 +131,10 @@ class FriendsTable extends Component {
       <TableRow className={classes.row}
         key={player.id}
         role='checkbox'
-        onClick={() => this.handleClick(player.id)}>
+        >
         <CustomTableCell component='th' scope='row'>
-          <Checkbox checked={this.state.open[player.id]} />
+          <Checkbox checked={player.id ? this.state.open[player.id]: false} 
+          onChange={(e) => this.handleClick(e)} value={player.id.toString()}/>
           {player.name}
         </CustomTableCell>
         <CustomTableCell >
@@ -149,7 +151,7 @@ class FriendsTable extends Component {
       return (
         <div className={classes.list} key={player.id}>
           <List component='nav' >
-            <ListItem button onClick={() => this.handleClick(player.id)}>
+            <ListItem button onChange={() => this.handleClick(player.id)}>
               <Checkbox checked={this.state.open[player.id]} />
               <ListItemText primary={player.name} />
               {this.state.open[player.id] ? <ExpandLess /> : <ExpandMore />}

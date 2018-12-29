@@ -10,6 +10,7 @@ function requestMiddleware({dispatch, getState}) {
     if (typeof action === 'function')
       return action(dispatch, getState)
     if (action.fetch) {
+      console.log('fetched')
       const refreshThreshold = (new Date().getTime() + 300000) // 5 minutes from now
       const expire = cookies.get('expire')
       const refresh_token = cookies.get('refreshToken')
@@ -18,9 +19,7 @@ function requestMiddleware({dispatch, getState}) {
         apiCall('POST', '/api/auth/refresh')
           .then(
             ({accessToken}) => {
-              cookies.set('accessToken', accessToken, {
-                httpOnly: true
-              })
+              cookies.set('accessToken', accessToken)
               return next(action)
             })
           .catch(err => {

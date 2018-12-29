@@ -90,7 +90,8 @@ class Home extends Component {
   }
 
   handleCourseApi(lat, lng) {
-    apiCall('GET', `/api/courses?lat=${lat}&lng=${lng}`, null)
+    fetch(`/api/courses?lat=${lat}&lng=${lng}`, {method: 'GET'})
+      .then(res => res.json())
       .then(res => {
         this.handleCourseInfo(res)
       })

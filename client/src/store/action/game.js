@@ -1,22 +1,51 @@
 import { apiCall, setTokenHeader } from '../../services/api'
-import { ADD_GAME, REMOVE_GAME, ADD_GAME_ID } from '../actionTypes'
+import { ADD_GAME,
+        REMOVE_GAME,
+        ADD_GAME_ID,
+        UPDATE_LAST_ID,
+        UPDATE_DELETE_ID, 
+        RESET_GAME,
+        RESET_DELETE_ID } from '../actionTypes'
 import { addError } from './errors'
-import { addMessage } from './message'
+import { setMessage } from './message'
 import Cookies from 'universal-cookie'
 
 const cookies = new Cookies()
 
-export function addGame(game) {
+export function addGame(player) {
   return {
     type: ADD_GAME,
-    game
+    player
   }
 }
 
-export function removeGame(players) {
+export function updateLastId() {
   return {
-    type: REMOVE_GAME,
-    players
+    type: UPDATE_LAST_ID
+  }
+}
+
+export function deleteId(id) {
+  return {
+    type: UPDATE_DELETE_ID,
+    id
+  }
+}
+
+export function resetGame() {
+  return {
+    type: RESET_GAME
+  }
+}
+
+export function resetDeleteId() {
+  return {
+    type: RESET_DELETE_ID
+  }
+}
+export function removeGame() {
+  return {
+    type: REMOVE_GAME
   }
 }
 
@@ -33,9 +62,9 @@ export function updateGame(game) {
       const accessToken = cookies.get('accessToken')
       setTokenHeader(accessToken)
       return apiCall('post', '/api/reserve', game)
-        .then(({ newGame }) => {
+        .then(newGame => {
           dispatch(addGameId(newGame.id))
-          dispatch(addMessage(newGame.message))
+          dispatch(setMessage(newGame.message))
           resolve()
         })
         .catch(err => {

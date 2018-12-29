@@ -7,8 +7,12 @@ import History from './history'
 import Performance from './performance'
 import AuthForm from '../component/authForm'
 import { connect } from 'react-redux'
-import { authUser } from '../store/action/auth'
+import { authUser, setAuthorizationToken } from '../store/action/auth'
 import { removeError } from '../store/action/errors'
+import Cookies from 'universal-cookie'
+
+
+const cookies = new Cookies()
 
 class Main extends Component {
   constructor(props) {
@@ -18,6 +22,13 @@ class Main extends Component {
     }
     this.handleCourseName = this.handleCourseName.bind(this)
   }
+
+  // componentDidMount() {
+  //   const refresh_token = cookies.get('refreshToken')
+  //   console.log('here')
+  //   setAuthorizationToken(refresh_token)
+  //   this.props.authUser('refresh', null)
+  // }
 
   handleCourseName(courseName) {
     this.setState({
