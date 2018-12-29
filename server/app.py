@@ -58,9 +58,7 @@ url = url.format(**params)
 app.config['SQLALCHEMY_DATABASE_URI'] = url
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.config['PROPAGATE_EXCEPTIONS'] = True
-app.config['JWT_BLACKLIST_ENABLED'] = True
-app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(hours=3)
-app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
+
 
 db.init_app(app)
 with app.app_context():
@@ -73,6 +71,9 @@ def create_tables():
 
 
 jwt = JWTManager(app) # this will create /auth
+app.config['JWT_BLACKLIST_ENABLED'] = True
+app.config['JWT_ACCESS_TOKEN_EXPIRES'] = datetime.timedelta(hours=3)
+app.config['JWT_BLACKLIST_TOKEN_CHECKS'] = ['access', 'refresh']
 
 @jwt.token_in_blacklist_loader
 def check_if_token_in_blacklist(decrypted_token):

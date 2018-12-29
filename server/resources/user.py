@@ -36,9 +36,10 @@ class UserRegister(Resource):
       name = data['name'],
       phone = data['phone']
     )
+    print(new_user)
     try:
       new_user.save_to_db()
-      access_token = create_access_token(identity=data['email'], fresh=True)
+      access_token = create_access_token(identity=data['email'], expires_delta=expire_time, fresh=True)
       refresh_token = create_refresh_token(identity=data['email'])
       return {
         'message':'User {} was created'.format(data['name']),
@@ -61,7 +62,7 @@ class UserLogin(Resource):
       return {'message': 'User {} doesn\'t exist'.format(data['email'])}, 404
 
     if UserModel.verify_hash(data['password'], current_user.password):
-      access_token = create_access_token(identity=data['email'], fresh=True)
+      access_token = create_access_token(identity=data['email'], expires_delta=expire_time, fresh=True)
       refresh_token = create_refresh_token(identity=data['email'])
       
       return {
@@ -80,7 +81,7 @@ class TokenRefresh(Resource):
   def post(self):
     current_user_email = get_jwt_identity()
     current_user = UserModel.find_by_email(current_user_email)
-    access_token = create_access_token(identity=current_user.email, fresh=False)
+    access_token = create_access_token(identity=current_user.email, expires_delta=expire_time, fresh=False)
     refresh_token = create_refresh_token(identity=current_user.email)
     return { 'username': current_user.name,
             'id': current_user.id,

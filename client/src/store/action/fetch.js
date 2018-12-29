@@ -1,7 +1,7 @@
 import { FETCH } from '../actionTypes'
 
 
-export function fetch() {
+export function fetched() {
   return {
     type: FETCH
   }

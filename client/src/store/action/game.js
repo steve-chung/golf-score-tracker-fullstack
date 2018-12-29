@@ -3,7 +3,9 @@ import { ADD_GAME,
         REMOVE_GAME,
         ADD_GAME_ID,
         UPDATE_LAST_ID,
-        UPDATE_DELETE_ID } from '../actionTypes'
+        UPDATE_DELETE_ID, 
+        RESET_GAME,
+        RESET_DELETE_ID } from '../actionTypes'
 import { addError } from './errors'
 import { setMessage } from './message'
 import Cookies from 'universal-cookie'
@@ -11,7 +13,6 @@ import Cookies from 'universal-cookie'
 const cookies = new Cookies()
 
 export function addGame(player) {
-  console.log(player)
   return {
     type: ADD_GAME,
     player
@@ -25,10 +26,21 @@ export function updateLastId() {
 }
 
 export function deleteId(id) {
-  console.log(id)
   return {
     type: UPDATE_DELETE_ID,
     id
+  }
+}
+
+export function resetGame() {
+  return {
+    type: RESET_GAME
+  }
+}
+
+export function resetDeleteId() {
+  return {
+    type: RESET_DELETE_ID
   }
 }
 export function removeGame() {
@@ -50,7 +62,7 @@ export function updateGame(game) {
       const accessToken = cookies.get('accessToken')
       setTokenHeader(accessToken)
       return apiCall('post', '/api/reserve', game)
-        .then(({ newGame }) => {
+        .then(newGame => {
           dispatch(addGameId(newGame.id))
           dispatch(setMessage(newGame.message))
           resolve()

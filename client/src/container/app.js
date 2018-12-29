@@ -16,7 +16,6 @@ function setTokenHeader(token) {
     setAuthorizationToken(token)
     // prevent someone from manually tampering with the key of jwtToken in localStorage
     try {
-      console.log(jwtDecode(token))
       if (!username) {
         store.dispatch(authUser('refresh', {}))
       } else {

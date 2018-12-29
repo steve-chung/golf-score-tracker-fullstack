@@ -15,9 +15,12 @@ import { updateGame,
         removeGame,
         addGame,
         updateLastId,
-        deleteId } from '../store/action/game'
-import { fetch } from '../store/action/fetch'
+        deleteId, 
+        resetGame,
+        resetDeleteId } from '../store/action/game'
+import { fetched } from '../store/action/fetch'
 import { compose } from 'recompose'
+
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
@@ -102,12 +105,15 @@ class Invite extends Component {
     //   players: newPlayers
     // })
     this.props.removeGame()
+    this.props.resetDeleteId()
   }
 
   handleSubmit() {
-    const {players, scheduledDate} = this.props.games
-    const {courseName} = this.props
-    const date = Date.parse(scheduledDate)
+    const { players } = this.props.games
+    const { scheduledDate } = this.state
+    const { courseName } = this.props
+    const date = scheduledDate
+    console.log(date)
     const newData = {
       course: courseName,
       date,
@@ -115,12 +121,16 @@ class Invite extends Component {
       totalScores: 0
     }
     if (players.length !== 0) {
-      this.props.fetch()
+      this.props.fetched()
+      // const newDataJson = JSON.stringify(newData)
+      // console.log(newDataJson)
       this.props.updateGame(newData)
-      // fetch(`/data/games`, {method: 'POST',
+      // const accessToken = cookies.get('accessToken')
+      // fetch(`/api/reserve`, {method: 'POST',
       //   headers: {
       //     'Accept': 'application/json',
-      //     'Content-Type': 'application/json'
+      //     'Content-Type': 'application/json',
+      //     'Authorization': `Bearer ${accessToken}`
       //   },
       //   body: JSON.stringify(newData)})
       //   .then(res => {
@@ -129,7 +139,7 @@ class Invite extends Component {
       //   .catch(err => {
       //     console.error(err)
       //   })
-
+      this.props.resetGame()
       this.props.history.push('/')
     }
     else {
@@ -152,12 +162,7 @@ class Invite extends Component {
 
   handleClose(e) {
     e.preventDefault(this.props)
-    if (typeof (e.target[0].value) !== 'string') {
-      this.setState({
-        open: false
-      })
-    }
-    else {
+    if (typeof (e.target[0].value) === 'string') {
       const { lastId } = this.props.games
       const playerInfo = {
         id: lastId,
@@ -165,18 +170,17 @@ class Invite extends Component {
         avgScore: +e.target[1].value,
         email: e.target[2].value
       }
-
       // const newPlayer = players.map((player) => {
       //   return Object.assign({}, player)
       // })
       this.props.addGame(playerInfo)
       this.props.updateLastId()
-      this.setState({
-        open: false
-        // players: [...newPlayer, playerInfo],
-        // lastId: lastId + 1
-      })
     }
+    this.setState({
+      open: false
+      // players: [...newPlayer, playerInfo],
+      // lastId: lastId + 1
+    })
     e.target.reset()
   }
 
@@ -290,4 +294,6 @@ export default compose(withStyles(styles),
                       addGame, 
                       deleteId, 
                       updateLastId, 
-                      fetch }))(Invite)
+                      fetched,
+                      resetGame,
+                      resetDeleteId }))(Invite)

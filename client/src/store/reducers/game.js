@@ -2,7 +2,9 @@ import { ADD_GAME,
         REMOVE_GAME, 
         ADD_GAME_ID, 
         UPDATE_LAST_ID, 
-        UPDATE_DELETE_ID } from '../actionTypes'
+        UPDATE_DELETE_ID,
+        RESET_GAME,
+        RESET_DELETE_ID } from '../actionTypes'
 
 const DEFAULT_STATE = {
   courseName: '',
@@ -13,8 +15,6 @@ const DEFAULT_STATE = {
 }
 
 export default (state = DEFAULT_STATE, action) => {
-  console.log(action.type +' '+action)
-  console.log(state)
   switch (action.type) {
     case ADD_GAME:
       return Object.assign({}, state, {
@@ -36,12 +36,24 @@ export default (state = DEFAULT_STATE, action) => {
       })
     case UPDATE_LAST_ID:
       return Object.assign({}, state, {
-        lastId: state.lastId++
+        lastId: state.lastId + 1
       })
 
     case UPDATE_DELETE_ID:
       return Object.assign({}, state, {
         deletePlayerId: action.id
+      })
+    
+    case RESET_GAME:
+      return Object.assign({}, state, {
+        players: [],
+        lastId: 1,
+        deletePlayerID: 0
+      })
+
+    case RESET_DELETE_ID:
+      return Object.assign({}, state, {
+        deletePlayerID: 0
       })
     default:
       return state
