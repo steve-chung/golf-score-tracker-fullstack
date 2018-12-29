@@ -45,8 +45,7 @@ class UserRegister(Resource):
         'username': data['name'],
         'id': new_user.id,
         'accessToken': access_token,
-        'refreshToken': refresh_token,
-        'expire': expire_date
+        'refreshToken': refresh_token
       }
     except Exception as e:
       print(e)
@@ -70,8 +69,7 @@ class UserLogin(Resource):
         'username': current_user.name,
         'id': current_user.id,
         'accessToken': access_token,
-        'refreshToken': refresh_token,
-        'expire': expire_date
+        'refreshToken': refresh_token
       }, 200
     else:
        return {'message': 'Wrong credentials'}, 401
@@ -80,10 +78,15 @@ class UserLogin(Resource):
 class TokenRefresh(Resource):
   @jwt_refresh_token_required
   def post(self):
-    current_user = get_jwt_identity()
-    access_token = create_access_token(identity=current_user, fresh=False)
-    return {'accessToken': access_token}
-
+    current_user_email = get_jwt_identity()
+    current_user = UserModel.find_by_email(current_user_email)
+    access_token = create_access_token(identity=current_user.email, fresh=False)
+    refresh_token = create_refresh_token(identity=current_user.email)
+    return { 'username': current_user.name,
+            'id': current_user.id,
+            'accessToken': access_token,
+            'refreshToken': refresh_token
+            }, 200
 
 class UserLogout(Resource):
   @jwt_required

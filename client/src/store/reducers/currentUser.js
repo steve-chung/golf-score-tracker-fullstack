@@ -4,7 +4,7 @@ const DEFAULT_STATE = {
   isAuthenticated: false, // hopefully be true, when logged in
   isFresh: false,
   isExpired: false,
-  user: {username:'', id:0} // all the user info when logged in
+  user: {username: '', id: 0} // all the user info when logged in
 }
 
 export default (state = DEFAULT_STATE, action) => {
@@ -35,5 +35,4 @@ export default (state = DEFAULT_STATE, action) => {
     default:
       return state
   }
-  console.log(state)
 }

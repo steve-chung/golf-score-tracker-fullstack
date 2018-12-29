@@ -21,6 +21,7 @@ class reserveCourse(Resource):
   @jwt_required
   def post(self):
     data = parser.parse_args()
+    print(data)
     user_email = get_jwt_identity()
     user = UserModel.find_by_email(user_email)
     players = data['players']
@@ -32,13 +33,15 @@ class reserveCourse(Resource):
         print(convert_player['email'])
         new_player = PlayersModel.find_by_email(
             convert_player['email'], user.id)
-        if new_player== None: 
+        if new_player == None: 
+          print(convert_player)
           new_player = PlayersModel(
             user_id=user.id,
             email=convert_player['email'],
             name=convert_player['name'],
             aveScore=convert_player['aveScore']
           )
+          print(new_player)
           new_player.save_to_db()
         new_games = GameModel(
           course = data['course'],

@@ -77,7 +77,6 @@ class FriendsTable extends Component {
 
   handleClick(e) {
     const {open} = this.state
-    console.log(e.target)
     const  i = +e.target.value
     let newOpen = {}
     if (open[i] === undefined) {
@@ -94,7 +93,6 @@ class FriendsTable extends Component {
         newOpen[key] = false
       }
     }
-    console.log(i)
     if (newOpen[i]) {
       this.props.handleDelete(i)
     }
@@ -106,8 +104,6 @@ class FriendsTable extends Component {
   render() {
     const { classes } = this.props
     const { smallWindows, players } = this.props
-    console.log(this.props)
-    console.log(this.state)
     const displayTable = () => {
       return (
         <Paper>

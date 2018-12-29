@@ -16,6 +16,7 @@ import { updateGame,
         addGame,
         updateLastId,
         deleteId } from '../store/action/game'
+import { fetch } from '../store/action/fetch'
 import { compose } from 'recompose'
 
 function Transition(props) {
@@ -86,7 +87,6 @@ class Invite extends Component {
     // this.setState({
     //   deletePlayerId: id
     // })
-    console.log(id)
     this.props.deleteId(id)
 
   }
@@ -115,6 +115,7 @@ class Invite extends Component {
       totalScores: 0
     }
     if (players.length !== 0) {
+      this.props.fetch()
       this.props.updateGame(newData)
       // fetch(`/data/games`, {method: 'POST',
       //   headers: {
@@ -157,7 +158,6 @@ class Invite extends Component {
       })
     }
     else {
-      console.log(this.props)
       const { lastId } = this.props.games
       const playerInfo = {
         id: lastId,
@@ -169,10 +169,8 @@ class Invite extends Component {
       // const newPlayer = players.map((player) => {
       //   return Object.assign({}, player)
       // })
-      console.log(playerInfo)
       this.props.addGame(playerInfo)
       this.props.updateLastId()
-      console.log(this.props.games)
       this.setState({
         open: false
         // players: [...newPlayer, playerInfo],
@@ -185,7 +183,6 @@ class Invite extends Component {
   render() {
     const { classes, smallWindows, courseName } = this.props
     const { open } = this.state
-    console.log(this.props)
     const { players } = this.props.games
     const date = getDate()
     return (
@@ -288,4 +285,9 @@ function mapStateToProps(state) {
 
 export default compose(withStyles(styles),
               connect(mapStateToProps, {
-              updateGame, removeGame, addGame, deleteId, updateLastId }))(Invite)
+                      updateGame, 
+                      removeGame, 
+                      addGame, 
+                      deleteId, 
+                      updateLastId, 
+                      fetch }))(Invite)
