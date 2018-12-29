@@ -87,23 +87,11 @@ class Invite extends Component {
   }
 
   handleSelectDelete(id) {
-    // this.setState({
-    //   deletePlayerId: id
-    // })
     this.props.deleteId(id)
 
   }
 
   handleClickDelete() {
-    // const { players, deletePlayerId } = this.state
-    // let newPlayers = players.map((player) => {
-    //   return Object.assign({}, player)
-    // }).filter((player) => (
-    //   player.id !== deletePlayerId
-    // ))
-    // this.setState({
-    //   players: newPlayers
-    // })
     this.props.removeGame()
     this.props.resetDeleteId()
   }
@@ -113,7 +101,6 @@ class Invite extends Component {
     const { scheduledDate } = this.state
     const { courseName } = this.props
     const date = scheduledDate
-    console.log(date)
     const newData = {
       course: courseName,
       date,
@@ -122,23 +109,7 @@ class Invite extends Component {
     }
     if (players.length !== 0) {
       this.props.fetched()
-      // const newDataJson = JSON.stringify(newData)
-      // console.log(newDataJson)
       this.props.updateGame(newData)
-      // const accessToken = cookies.get('accessToken')
-      // fetch(`/api/reserve`, {method: 'POST',
-      //   headers: {
-      //     'Accept': 'application/json',
-      //     'Content-Type': 'application/json',
-      //     'Authorization': `Bearer ${accessToken}`
-      //   },
-      //   body: JSON.stringify(newData)})
-      //   .then(res => {
-      //     console.log(res)
-      //   })
-      //   .catch(err => {
-      //     console.error(err)
-      //   })
       this.props.resetGame()
       this.props.history.push('/')
     }
@@ -170,16 +141,11 @@ class Invite extends Component {
         avgScore: +e.target[1].value,
         email: e.target[2].value
       }
-      // const newPlayer = players.map((player) => {
-      //   return Object.assign({}, player)
-      // })
       this.props.addGame(playerInfo)
       this.props.updateLastId()
     }
     this.setState({
       open: false
-      // players: [...newPlayer, playerInfo],
-      // lastId: lastId + 1
     })
     e.target.reset()
   }

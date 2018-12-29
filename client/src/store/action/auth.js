@@ -40,7 +40,6 @@ export function logout() {
     return new Promise((resolve, reject) => {
       return apiCall('post', '/api/auth/logout')
         .then(({ message }) => {
-          // localStorage.clear()
           cookies.remove('accessToken')
           cookies.remove('refreshToken')
           setAuthorizationToken(false, false)

@@ -29,7 +29,7 @@ class reserveCourse(Resource):
     try:
       for player in players:
         convert_player = literal_eval(player)
-        # new_player = None
+        new_player = None
         print(convert_player['email'])
         new_player = PlayersModel.find_by_email(
             convert_player['email'], user.id)
