@@ -9,6 +9,9 @@ import {
   Slide} from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import ScoreCard from '../container/scoreCard'
+import { connect } from 'react-redux'
+import { compose } from 'recompose'
+import { playGame } from '../store/action/game'
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
@@ -69,47 +72,47 @@ class Score extends Component {
   }
 
   componentDidMount() {
-    fetch('/data/games', {method: 'GET'})
-      .then(res => res.json())
-      .then(res => {
-        let newPlayers = [ ]
-        let currentHole = 1
-        const lastCourse = res.length - 1
-        let open = true
-        for (let i = 0; i < res[lastCourse].players.length; i++) {
-          newPlayers.push(res[lastCourse].players[i])
-        }
-        let localData = localStorage.getItem('localData')
-        const parsed = JSON.parse(localData)
-        let currentPlayer = res[lastCourse].players[0]
-        let newHoles = null
-        if (parsed) {
-          open = false
-          currentPlayer = parsed.currentPlayer
-          if (res[lastCourse].players[0].hole) {
-            const lastHoleIndex = res[lastCourse].players[0].hole.length
-            currentHole = parsed.holes[lastHoleIndex]
-          }
-          else {
-            currentHole = parsed.holes[0]
-          }
-          newHoles = parsed.holes
-        }
-
-        this.setState({
-          players: newPlayers,
-          open: open,
-          date: res[lastCourse].date,
-          courseName: res[lastCourse].course,
-          currentPlayer: currentPlayer,
-          currentHole,
-          holes: newHoles,
-          gameId: res[lastCourse].id
-        })
-      })
-      .catch(err => {
-        console.error(err)
-      })
+    // fetch('/data/games', {method: 'GET'})
+    //   .then(res => res.json())
+    //   .then(res => {
+    //     let newPlayers = [ ]
+    //     let currentHole = 1
+    //     const lastCourse = res.length - 1
+    //     let open = true
+    //     for (let i = 0; i < res[lastCourse].players.length; i++) {
+    //       newPlayers.push(res[lastCourse].players[i])
+    //     }
+    //     let localData = localStorage.getItem('localData')
+    //     const parsed = JSON.parse(localData)
+    //     let currentPlayer = res[lastCourse].players[0]
+    //     let newHoles = null
+    //     if (parsed) {
+    //       open = false
+    //       currentPlayer = parsed.currentPlayer
+    //       if (res[lastCourse].players[0].hole) {
+    //         const lastHoleIndex = res[lastCourse].players[0].hole.length
+    //         currentHole = parsed.holes[lastHoleIndex]
+    //       }
+    //       else {
+    //         currentHole = parsed.holes[0]
+    //       }
+    //       newHoles = parsed.holes
+    //     }
+    this.props.playGame()
+      //   this.setState({
+      //     players: newPlayers,
+      //     open: open,
+      //     date: res[lastCourse].date,
+      //     courseName: res[lastCourse].course,
+      //     currentPlayer: currentPlayer,
+      //     currentHole,
+      //     holes: newHoles,
+      //     gameId: res[lastCourse].id
+      //   })
+      // })
+      // .catch(err => {
+      //   console.error(err)
+      // })
   }
 
   handleClose(e) {
@@ -303,4 +306,12 @@ class Score extends Component {
   }
 }
 
-export default withStyles(styles)(Score)
+function mapStateToProps(state) {
+  return {
+    game: state.game
+  }
+}
+
+export default compose(withStyles(styles),
+                      connect(mapStateToProps, {
+                               playGame}))(Score)

@@ -1,9 +1,10 @@
 import { apiCall, setTokenHeader } from '../../services/api'
+import { setToken } from '../../services/setHeader'
 import { ADD_GAME,
         REMOVE_GAME,
         ADD_GAME_ID,
         UPDATE_LAST_ID,
-        UPDATE_DELETE_ID, 
+        UPDATE_DELETE_ID,
         RESET_GAME,
         RESET_DELETE_ID } from '../actionTypes'
 import { addError } from './errors'
@@ -56,11 +57,12 @@ export function addGameId(id) {
   }
 }
 
+
+
 export function updateGame(game) {
   return dispatch => {
     return new Promise((resolve, reject) => {
-      const accessToken = cookies.get('accessToken')
-      setTokenHeader(accessToken)
+      setToken('accessToken')
       return apiCall('post', '/api/reserve', game)
         .then(newGame => {
           dispatch(addGameId(newGame.id))
@@ -73,6 +75,23 @@ export function updateGame(game) {
             code: err.status
           }))
           dispatch(addError(err))
+          reject(err)
+        })
+    })
+  }
+}
+
+export function playGame() {
+  return dispatch => {
+    return new Promise((resolve, reject) => {
+      setToken('accessToken')
+      return apiCall('get', '/api/playGame')
+        .then(res => {
+          console.log(res)
+          resolve()
+        })
+        .catch(err => {
+          console.log(err)
           reject(err)
         })
     })
