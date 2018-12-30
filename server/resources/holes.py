@@ -16,10 +16,12 @@ parser.add_argument(
     'holes', action='append', help='This field cannot be blank', required=True)
 
 class createHoles(Resource):
-  @fresh_jwt_required
+  @jwt_required
   def post(self):
     data = parser.parse_args()
     user_email = get_jwt_identity()
+    print(data)
+    print(user_email)
     user = UserModel.find_by_email(user_email)
     holes = data['holes']
     game_id = data['game_id']

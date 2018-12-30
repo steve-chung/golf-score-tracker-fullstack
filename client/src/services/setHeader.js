@@ -5,6 +5,7 @@ const cookies = new Cookies()
 
 export function setToken(token) {
   const tokenHeader = cookies.get(token)
+  console.log(tokenHeader)
   setTokenHeader(tokenHeader)
 }
 

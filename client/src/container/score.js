@@ -12,6 +12,7 @@ import ScoreCard from '../container/scoreCard'
 import { connect } from 'react-redux'
 import { compose } from 'recompose'
 import { playGame } from '../store/action/game'
+import { saveHoles } from '../store/action/holes'
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
@@ -99,6 +100,16 @@ class Score extends Component {
     //       newHoles = parsed.holes
     //     }
     this.props.playGame()
+    let open = true
+    let localData = localStorage.getItem('localData')
+    const parsed = JSON.parse(localData)
+    if (parsed) {
+      open = false
+    }
+
+    this.setState({
+      open: open
+    })
       //   this.setState({
       //     players: newPlayers,
       //     open: open,
@@ -129,16 +140,25 @@ class Score extends Component {
         eachHole[hole] = +e.target[i].value
         return eachHole
       })
-      this.setState({
-        open: false,
-        holes: newHoles,
-        currentHole: newHoles[0]
-      })
-      let localData = {
-        open: false,
+      const gameId = this.props.game.id
+      const game = {
+        game_id: gameId,
         holes: newHoles
       }
-      localStorage.setItem('localData', JSON.stringify(localData))
+      // this.setState({
+      //   open: false,
+      //   holes: newHoles,
+      //   currentHole: newHoles[0]
+      // })
+      // let localData = {
+      //   open: false,
+      //   holes: newHoles
+      // }
+      // localStorage.setItem('localData', JSON.stringify(localData))
+      this.props.saveHoles(game)
+      this.setState({
+        open: false
+      })
     }
     e.target.reset()
   }
@@ -268,13 +288,16 @@ class Score extends Component {
     })
   }
   render() {
-    const { courseName, currentPlayer, currentHole } = this.state
+    const { currentPlayer, currentHole } = this.state
+    const { courseName } = this.props.game
+    console.log(this.props)
+    console.log(this.state.open)
     return (
       <div className='container' style={{margin: '0, auto'}}>
         <Dialog
           open={this.state.open}
           TransitionComponent={Transition}
-          keepMounted
+          // keepMounted
           onClose={this.handleClose}
           aria-labelledby="alert-dialog-slide-title"
           aria-describedby="alert-dialog-slide-description">
@@ -314,4 +337,5 @@ function mapStateToProps(state) {
 
 export default compose(withStyles(styles),
                       connect(mapStateToProps, {
-                               playGame}))(Score)
+                               playGame,
+                              saveHoles}))(Score)

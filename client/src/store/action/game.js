@@ -1,4 +1,4 @@
-import { apiCall, setTokenHeader } from '../../services/api'
+import { apiCall } from '../../services/api'
 import { setToken } from '../../services/setHeader'
 import { ADD_GAME,
         REMOVE_GAME,
@@ -6,12 +6,11 @@ import { ADD_GAME,
         UPDATE_LAST_ID,
         UPDATE_DELETE_ID,
         RESET_GAME,
-        RESET_DELETE_ID } from '../actionTypes'
+        RESET_DELETE_ID,
+        PLAY_GAME} from '../actionTypes'
 import { addError } from './errors'
 import { setMessage } from './message'
-import Cookies from 'universal-cookie'
 
-const cookies = new Cookies()
 
 export function addGame(player) {
   return {
@@ -57,8 +56,12 @@ export function addGameId(id) {
   }
 }
 
-
-
+export function setPlayGame(game) {
+  return {
+    type: PLAY_GAME,
+    game
+  }
+}
 export function updateGame(game) {
   return dispatch => {
     return new Promise((resolve, reject) => {
@@ -86,12 +89,21 @@ export function playGame() {
     return new Promise((resolve, reject) => {
       setToken('accessToken')
       return apiCall('get', '/api/playGame')
-        .then(res => {
-          console.log(res)
+        .then(({course, game_id, date }) => {
+            const game = {
+              courseName: course,
+              id: game_id,
+              date
+            }
+          dispatch(setPlayGame(game))
           resolve()
         })
         .catch(err => {
-          console.log(err)
+          dispatch(addError({
+            message: err.data.message,
+            code: err.status
+          }))
+          dispatch(addError(err))
           reject(err)
         })
     })
