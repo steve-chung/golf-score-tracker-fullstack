@@ -89,12 +89,13 @@ export function playGame() {
     return new Promise((resolve, reject) => {
       setToken('accessToken')
       return apiCall('get', '/api/playGame')
-        .then(({course, game_id, date }) => {
-            const game = {
-              courseName: course,
-              id: game_id,
-              date
-            }
+        .then(({ course, game_id, date }) => {
+          const game = {
+            courseName: course,
+            id: game_id,
+            date
+          }
+          localStorage.setItem('game', game)
           dispatch(setPlayGame(game))
           resolve()
         })

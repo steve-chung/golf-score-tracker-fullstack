@@ -6,6 +6,7 @@ import fetch from './fetch'
 import game from './game'
 import message from './message'
 import holes from './holes'
+import scores from './scores'
 
 const rootReducer = combineReducers({
   map,
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
   fetch,
   game,
   message,
-  holes
+  holes,
+  scores
 })
 
 export default rootReducer

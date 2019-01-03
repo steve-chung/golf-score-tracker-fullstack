@@ -150,7 +150,7 @@ api.add_resource(reserveCourse, '/api/reserve')
 api.add_resource(createHoles, '/api/holes')
 api.add_resource(PlayGame, '/api/playGame')
 api.add_resource(StatPost, '/api/stat')
-api.add_resource(Stat, '/api/stat/<int:stat_id>')
+api.add_resource(Stat, '/api/stat/<int:stat_id>/<int:game_id>')
 api.add_resource(StatView, '/api/stat/view/<int:user_id>')
 app.after_request(sql_debug)
 
