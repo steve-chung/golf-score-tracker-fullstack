@@ -41,19 +41,18 @@ class Stat(Resource):
 
     if stat:
       return {
-        'stat_id': stat.id,
         'firstClub': stat.first_club,
         'firstDistance': stat.first_distance,
+        'secondClub': stat.second_club,
         'secondDistance': stat.second_distance,
         'stroksGreen': stat.stroks_green,
-        'totalShot': stat.total_shot,
-        'totalScore': game.total_score
+        'totalShot': stat.total_shot
       }
     return {'message': 'Stat not found'}
 
-  
+class StatPut(Resource):
     
-  @fresh_jwt_required
+  @jwt_required
   def put(self, stat_id):
     data = parser.parse_args()
     game_id = data['game_id']

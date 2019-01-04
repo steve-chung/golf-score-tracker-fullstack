@@ -13,7 +13,7 @@ from resources.user import UserRegister, UserLogin, TokenRefresh, UserLogout
 from resources.reserve import reserveCourse
 from resources.game import PlayGame
 from resources.holes import createHoles
-from resources.stat import Stat, StatPost
+from resources.stat import Stat, StatPost, StatPut 
 from flask_jwt_extended import JWTManager
 from models.user import RevokedTokenModel
 
@@ -151,6 +151,7 @@ api.add_resource(createHoles, '/api/holes')
 api.add_resource(PlayGame, '/api/playGame')
 api.add_resource(StatPost, '/api/stat')
 api.add_resource(Stat, '/api/stat/<int:stat_id>/<int:game_id>')
+api.add_resource(StatPut, '/api/stat/<int:stat_id>')
 api.add_resource(StatView, '/api/stat/view/<int:user_id>')
 app.after_request(sql_debug)
 

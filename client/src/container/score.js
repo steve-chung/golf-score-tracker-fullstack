@@ -16,9 +16,9 @@ import { saveHoles,
         addCurrentHole,
         // callCurrentHole,
         prevHole,
-        createHoles,
-        addStatID } from '../store/action/holes'
-import { createScoreServer } from '../store/action/scores'
+        createHoles } from '../store/action/holes'
+import { createScoreServer,
+         getScoreServer } from '../store/action/scores'
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
@@ -79,32 +79,6 @@ class Score extends Component {
   }
 
   componentDidMount() {
-    // fetch('/data/games', {method: 'GET'})
-    //   .then(res => res.json())
-    //   .then(res => {
-    //     let newPlayers = [ ]
-    //     let currentHole = 1
-    //     const lastCourse = res.length - 1
-    //     let open = true
-    //     for (let i = 0; i < res[lastCourse].players.length; i++) {
-    //       newPlayers.push(res[lastCourse].players[i])
-    //     }
-    //     let localData = localStorage.getItem('localData')
-    //     const parsed = JSON.parse(localData)
-    //     let currentPlayer = res[lastCourse].players[0]
-    //     let newHoles = null
-    //     if (parsed) {
-    //       open = false
-    //       currentPlayer = parsed.currentPlayer
-    //       if (res[lastCourse].players[0].hole) {
-    //         const lastHoleIndex = res[lastCourse].players[0].hole.length
-    //         currentHole = parsed.holes[lastHoleIndex]
-    //       }
-    //       else {
-    //         currentHole = parsed.holes[0]
-    //       }
-    //       newHoles = parsed.holes
-    //     }
     this.props.playGame()
     let open = true
     const holes = localStorage.getItem('holes')
@@ -119,20 +93,6 @@ class Score extends Component {
     this.setState({
       open: open
     })
-      //   this.setState({
-      //     players: newPlayers,
-      //     open: open,
-      //     date: res[lastCourse].date,
-      //     courseName: res[lastCourse].course,
-      //     currentPlayer: currentPlayer,
-      //     currentHole,
-      //     holes: newHoles,
-      //     gameId: res[lastCourse].id
-      //   })
-      // })
-      // .catch(err => {
-      //   console.error(err)
-      // })
   }
 
   handleClose(e) {
@@ -205,6 +165,12 @@ class Score extends Component {
     console.log(playerScore)
     if (!holes.holes[currentHoleIndex].stat_id) {
       this.props.createScoreServer(playerScore)
+    } else if (currentHoleIndex === 17) {
+      this.props.history.push('/')
+      localStorage.clear()
+      return
+    } else {
+      this.props.getScoreServer(holes.holes[newHole].stat_id, playerScore)
     }
     localStorage.setItem('playerScore', parsedPlayerScore)
     localStorage.setItem('currentHole', JSON.stringify(holes.holes[newHole]))
@@ -237,22 +203,22 @@ class Score extends Component {
     // this.handlePutScores(updatedPlayers)
   }
 
-  handlePutScores(players) {
-    const { gameId, courseName, date } = this.state
+  // handlePutScores(players) {
+  //   const { gameId, courseName, date } = this.state
 
-    fetch(`/data/games/${gameId}`, {method: 'PUT',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({course: courseName, date: date, players: players})})
-      .then(res => res.json())
-      .then(res =>
-        console.log(res))
-      .catch(err =>
-        console.error(err))
+  //   fetch(`/data/games/${gameId}`, {method: 'PUT',
+  //     headers: {
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({course: courseName, date: date, players: players})})
+  //     .then(res => res.json())
+  //     .then(res =>
+  //       console.log(res))
+  //     .catch(err =>
+  //       console.error(err))
 
-  }
+  // }
 
   handleOnPrev(e) {
     const { players, currentHole, currentPlayer } = this.state
@@ -350,4 +316,5 @@ export default compose(withStyles(styles),
                               // moveNextHole,
                               createHoles,
                               prevHole,
-                              createScoreServer }))(Score)
+                              createScoreServer,
+                              getScoreServer }))(Score)

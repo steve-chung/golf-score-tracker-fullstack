@@ -2,7 +2,6 @@ import { CREATE_SCORE, UPDATE_SCORE, GET_SCORE } from '../actionTypes'
 
 const DEFAULT_STATE = {
   score: {},
-  currentHole: {},
   deadEnd: false
 }
 

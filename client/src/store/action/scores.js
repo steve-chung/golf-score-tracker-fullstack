@@ -45,10 +45,28 @@ export function createScoreServer(score) {
             message: err.data.message,
             code: err.status
           }))
-          dispatch(addError(err))
           reject(err)
         })
     })
   }
 }
 
+export function getScoreServer(stat_id, game_id) {
+  return dispatch => {
+    return new Promise((resolve, reject) => {
+      setToken('accessToken')
+      return apiCall('get', `/api/stat/${stat_id}/${game_id}`)
+        .then(newScore => {
+          dispatch(getScore(newScore))
+          resolve()
+        })
+        .catch(err => {
+          dispatch(addError({
+            message: err.data.message,
+            code: err.status
+          }))
+          reject(err)
+        })
+    })
+  }
+}
