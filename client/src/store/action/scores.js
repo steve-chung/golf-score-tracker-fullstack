@@ -1,6 +1,7 @@
 import { apiCall } from '../../services/api'
 import { setToken } from '../../services/setHeader'
 import { CREATE_SCORE, UPDATE_SCORE, GET_SCORE } from '../actionTypes'
+import { addStatId } from './holes'
 import { addError } from './errors'
 import { setMessage } from './message'
 
@@ -28,13 +29,14 @@ export function getScore(score) {
 
 
 
-export function createScoreSever(score) {
+export function createScoreServer(score) {
   return dispatch => {
     return new Promise((resolve, reject) => {
       setToken('accessToken')
       return apiCall('post', '/api/stat', score)
         .then(newScore => {
           dispatch(createScore(newScore))
+          dispatch(addStatId(score.hole_id, newScore.stat_id))
           dispatch(setMessage(newScore.message))
           resolve()
         })
@@ -50,5 +52,3 @@ export function createScoreSever(score) {
   }
 }
 
-
-export function getScoreServer()

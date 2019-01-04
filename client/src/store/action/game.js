@@ -95,7 +95,8 @@ export function playGame() {
             id: game_id,
             date
           }
-          localStorage.setItem('game', game)
+          console.log(game)
+          localStorage.setItem('game', JSON.stringify(game))
           dispatch(setPlayGame(game))
           resolve()
         })

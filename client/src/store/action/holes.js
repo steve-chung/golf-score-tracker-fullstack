@@ -30,9 +30,10 @@ export function addCurrentHole(currentHole) {
   }
 }
 
-export function addStatID(key, statId) {
+export function addStatId(hole_id, statId) {
   return {
     type: ADD_HOLE_STAT_ID,
+    hole_id,
     statId
   }
 }

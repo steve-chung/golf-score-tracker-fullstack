@@ -18,6 +18,7 @@ import { saveHoles,
         prevHole,
         createHoles,
         addStatID } from '../store/action/holes'
+import { createScoreServer } from '../store/action/scores'
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
@@ -107,10 +108,11 @@ class Score extends Component {
     this.props.playGame()
     let open = true
     const holes = localStorage.getItem('holes')
+    console.log(holes)
     const currentHole = localStorage.getItem('currentHole')
     if (holes) {
       open = false
-      this.props.createHoles(JSON.parse(holes))
+      this.props.createHoles(JSON.parse(holes).holes)
       this.props.addCurrentHole(JSON.parse(currentHole))
     }
 
@@ -174,9 +176,10 @@ class Score extends Component {
   }
 
   handleOnNext(firstClub, firstDistance, secondClub, secondDistance, stroksGreen, totalShots) {
-    const { holes, currentHole } = this.props
+    const { holes } = this.props
     let totalScore
     let parsedPlayerScore
+    let nextHole
     const gameId = this.props.game.id
     const playerScore = {
       game_id: gameId,
@@ -188,22 +191,29 @@ class Score extends Component {
       totalShots
     }
     
-    if (!playerScore.hole_id) {
       // this.props.addCurrentHole(holes.holes[0])
-      playerScore.hole_id = holes.holes[0].holeId
-  }
-    else {
-      parsedPlayerScore = JSON.stringify(playerScore)
-      localStorage.setItem('playerScore', parsedPlayerScore)
-      localStorage.getItem('totalScore')
-      localStorage.setItem('totalScore', totalScore)
-      this.props.nextHole()
+    
+    playerScore.hole_id = holes.currentHole.holeId
+    const currentHoleIndex = holes.currentHole.holeNumber - 1
+    const newHole = holes.currentHole.holeNumber
+    totalScore = JSON.parse(localStorage.getItem('totalScore'))
+    totalScore = !totalScore ? +playerScore.totalShots : +totalScore + playerScore.totalShots
+    playerScore.totalScore = totalScore
+    localStorage.setItem('totalScore', JSON.stringify(totalScore))
+
+    this.props.addCurrentHole(holes.holes[newHole])
+    console.log(playerScore)
+    if (!holes.holes[currentHoleIndex].stat_id) {
+      this.props.createScoreServer(playerScore)
     }
+    localStorage.setItem('playerScore', parsedPlayerScore)
+    localStorage.setItem('currentHole', JSON.stringify(holes.holes[newHole]))
+    // localStorage.getItem('totalScore')
+    // localStorage.setItem('totalScore', totalScore)
+    // this.props.nextHole()
+    
     // const updatedPlayers = this.handleUpdatePlayer(playerNowObj, players, currentPlayer.id, playerScore, playerNow, holeIndex)
     // const nextHole = holes.indexOf(currentHole) + 1
-    console.log(holes.currentHole)
-    const localData = localStorage.getItem('localData')
-    let parsed = JSON.parse(localData)
 
     // if (nextPlayerIndex === players.length) {
     //   this.setState({
@@ -281,7 +291,11 @@ class Score extends Component {
   }
   render() {
     const { currentPlayer, currentHole } = this.state
+    const { holes } = this.props
     const { courseName } = this.props.game
+    if (holes.holes) {
+      localStorage.setItem('holes', JSON.stringify(holes))
+    }
     console.log(this.props)
     console.log(this.state.open)
     return (
@@ -335,4 +349,5 @@ export default compose(withStyles(styles),
                               addCurrentHole,
                               // moveNextHole,
                               createHoles,
-                              prevHole }))(Score)
+                              prevHole,
+                              createScoreServer }))(Score)
