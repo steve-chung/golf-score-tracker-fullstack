@@ -138,8 +138,6 @@ class Score extends Component {
   handleOnNext(firstClub, firstDistance, secondClub, secondDistance, stroksGreen, totalShots) {
     const { holes } = this.props
     let totalScore
-    let parsedPlayerScore
-    let nextHole
     const gameId = this.props.game.id
     const playerScore = {
       game_id: gameId,
@@ -172,7 +170,7 @@ class Score extends Component {
     } else {
       this.props.getScoreServer(holes.holes[newHole].stat_id, playerScore)
     }
-    localStorage.setItem('playerScore', parsedPlayerScore)
+    localStorage.setItem('score', JSON.stringify(playerScore))
     localStorage.setItem('currentHole', JSON.stringify(holes.holes[newHole]))
     // localStorage.getItem('totalScore')
     // localStorage.setItem('totalScore', totalScore)
@@ -221,33 +219,37 @@ class Score extends Component {
   // }
 
   handleOnPrev(e) {
-    const { players, currentHole, currentPlayer } = this.state
-    const newHoles = this.props.holes.holes
-    let playerIndex = players.indexOf(currentPlayer)
-    let holeIndex = newHoles.indexOf(currentHole)
-    if (!holeIndex) {
-      holeIndex = 0
-    }
-    else {
-      if (!playerIndex) {
-        holeIndex--
-      }
-      else {
-        holeIndex = currentHole
-      }
-    }
+    // const { players, currentHole, currentPlayer } = this.state
+    const { holes } = this.props.holes
+    const gameId = this.props.game.id
+    const currentHoleIndex = holes.currentHole.holeNumber - 2
+    let newHole
+    newHole = currentHoleIndex > -1 ? holes.currentHole.holeNumber - 1 : 0
+    const currentHole = holes.holes[newHole]
+    this.props.getScoreServer(currentHole.hole_id, gameId)
+    // if (!holeIndex) {
+    //   holeIndex = 0
+    // }
+    // else {
+    //   if (!playerIndex) {
+    //     holeIndex--
+    //   }
+    //   else {
+    //     holeIndex = currentHole
+    //   }
+    // }
 
-    if (playerIndex > 0) {
-      playerIndex--
-    }
-    else {
-      playerIndex = 0
-    }
+    // if (playerIndex > 0) {
+    //   playerIndex--
+    // }
+    // else {
+    //   playerIndex = 0
+    // }
 
-    this.setState({
-      currentHole: newHoles[holeIndex],
-      currentPlayer: players[playerIndex]
-    })
+    // this.setState({
+    //   currentHole: newHoles[holeIndex],
+    //   currentPlayer: players[playerIndex]
+    // })
   }
 
   handleCancel(e) {
@@ -304,7 +306,8 @@ class Score extends Component {
 function mapStateToProps(state) {
   return {
     game: state.game,
-    holes: state.holes
+    holes: state.holes,
+    score: state.scores
   }
 }
 
