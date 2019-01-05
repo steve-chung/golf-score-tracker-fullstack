@@ -132,24 +132,6 @@ class Home extends Component {
       })
   }
 
-  // handleCouresPost(course) {
-  //   const date = Date.now()
-  //   // fetch(`/courses`, {method: 'POST',
-  //   //   headers: {
-  //   //     'Accept': 'application/json',
-  //   //     'Content-Type': 'application/json'
-  //   //   },
-  //   //   body: JSON.stringify({date: `${date}`,
-  //   //     name: `${course}` })})
-  //   apiCall('POST', `/courses`, null)
-  //     .then(res => {
-  //       console.log(res)
-  //     })
-  //     .catch(err => {
-  //       console.error(err)
-  //     })
-  // }
-
   handleChoose(id) {
     const {courses} = this.state
     const chosenCourse = courses.filter((course) => {
@@ -165,9 +147,7 @@ class Home extends Component {
 
   handleClose(e) {
     const answer = e.target.textContent
-    // const {selectedCourseName} = this.state
     if (answer === 'Yes') {
-      // this.handleCouresPost(selectedCourseName)
       this.setState({
         open: false,
         redirectToInvite: true

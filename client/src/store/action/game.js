@@ -7,22 +7,25 @@ import { ADD_GAME,
         UPDATE_DELETE_ID,
         RESET_GAME,
         RESET_DELETE_ID,
-        PLAY_GAME} from '../actionTypes'
+        PLAY_GAME,
+        REMOVE_PLAYER} from '../actionTypes'
 import { addError } from './errors'
 import { setMessage } from './message'
 
 
 export function addGame(player) {
-  return {
+  return dispatch =>
+   dispatch({
     type: ADD_GAME,
     player
-  }
+  })
 }
 
 export function updateLastId() {
-  return {
+  return dispatch =>
+    dispatch({
     type: UPDATE_LAST_ID
-  }
+  })
 }
 
 export function deleteId(id) {
@@ -62,6 +65,13 @@ export function setPlayGame(game) {
     game
   }
 }
+
+export function removePlayers() {
+  return {
+    type: REMOVE_PLAYER
+  }
+}
+
 export function updateGame(game) {
   return dispatch => {
     return new Promise((resolve, reject) => {
@@ -95,7 +105,6 @@ export function playGame() {
             id: game_id,
             date
           }
-          console.log(game)
           localStorage.setItem('game', JSON.stringify(game))
           dispatch(setPlayGame(game))
           resolve()

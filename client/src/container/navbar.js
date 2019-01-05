@@ -29,11 +29,9 @@ const styles = theme => ({
     marginRight: 20
   },
   icon: {
-    
     display: 'inline',
     verticalAlign: 'middle',
     paddingRight: '5px',
-    
   },
 })
 
@@ -56,25 +54,24 @@ class Navbar extends Component {
     const { classes } = this.props
     const { isAuthenticated, user } = this.props.currentUser
 
-
     const list =
       <div className={classes.list}>
         <List>
           <ListItem>
-            <Link to='/'><ListItemText primary={'Home'}/></Link>
+            <Link to='/'onClick={this.handleToggle}><ListItemText primary={'Home'}/></Link>
           </ListItem>
           <Divider/>
           { isAuthenticated && (<div>
             <ListItem>
-              <Link to='/history'><ListItemText primary={'History'}/></Link>
+              <Link to='/history' onClick={this.handleToggle}><ListItemText primary={'History'}/></Link>
             </ListItem>
             <Divider/>
             <ListItem>
-              <Link to='/scores'><ListItemText primary={'Play Game'}/></Link>
+              <Link to='/scores' onClick={this.handleToggle}><ListItemText primary={'Play Game'}/></Link>
             </ListItem>
             <Divider/>
             <ListItem>
-              <Link to='/performance'><ListItemText primary={'Performance'}/></Link>
+              <Link to='/performance' onClick={this.handleToggle}><ListItemText primary={'Performance'}/></Link>
             </ListItem>
             <Divider/>
           </div>)}

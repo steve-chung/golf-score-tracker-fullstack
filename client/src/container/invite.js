@@ -18,7 +18,7 @@ import { updateGame,
         deleteId,
         resetGame,
         resetDeleteId } from '../store/action/game'
-import { fetched } from '../store/action/fetch'
+import { fetched, notFetch } from '../store/action/fetch'
 import { compose } from 'recompose'
 
 
@@ -80,12 +80,13 @@ class Invite extends Component {
     this.handleDate = this.handleDate.bind(this)
   }
 
+  
   handleClickOpen() {
     this.setState({
       open: true
     })
   }
-
+  
   handleSelectDelete(id) {
     this.props.deleteId(id)
 
@@ -100,17 +101,20 @@ class Invite extends Component {
     const { players } = this.props.games
     const { scheduledDate } = this.state
     const { courseName } = this.props
-    const date = scheduledDate
+    const date = scheduledDate || getDate() + ':00'
     const newData = {
       course: courseName,
       date,
       players,
       totalScores: 0
     }
+    console.log(players)
     if (players.length !== 0) {
-      this.props.fetched()
       this.props.updateGame(newData)
       this.props.resetGame()
+      this.setState({
+        open: false
+      })
       this.props.history.push('/')
     }
     else {
@@ -132,7 +136,7 @@ class Invite extends Component {
   }
 
   handleClose(e) {
-    e.preventDefault(this.props)
+    e.preventDefault()
     if (typeof (e.target[0].value) === 'string') {
       const { lastId } = this.props.games
       const playerInfo = {
@@ -141,6 +145,7 @@ class Invite extends Component {
         avgScore: +e.target[1].value,
         email: e.target[2].value
       }
+      console.warn(playerInfo)
       this.props.addGame(playerInfo)
       this.props.updateLastId()
     }
@@ -184,7 +189,6 @@ class Invite extends Component {
           open={open}
           TransitionComponent={Transition}
           keepMounted
-          onClose={this.handleClose}
           aria-labelledby="alert-dialog-slide-title">
           <form onSubmit={this.handleClose}>
             <DialogTitle id="alert-dialog-slide-title">
@@ -261,5 +265,6 @@ export default compose(withStyles(styles),
                       deleteId, 
                       updateLastId, 
                       fetched,
+                      notFetch,
                       resetGame,
                       resetDeleteId }))(Invite)
