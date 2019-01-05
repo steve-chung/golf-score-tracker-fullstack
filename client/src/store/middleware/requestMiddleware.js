@@ -8,7 +8,6 @@ const cookies = new Cookies()
 const requestMiddleware = store => next => action => {
   if (typeof action === 'function')
     return action(store.dispatch, store.getState)
-  console.log(store.getState().fetched)
   const { fetched } = store.getState().fetch
   if (fetched) {
     console.log('fetched')

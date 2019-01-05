@@ -57,7 +57,6 @@ export function getScoreServer(stat_id) {
       setToken('accessToken')
       return apiCall('get', `/api/stat/${stat_id}`)
         .then(newScore => {
-          console.log(newScore)
           dispatch(getScore(newScore))
           localStorage.setItem('score', JSON.stringify(newScore))
           resolve()

@@ -4,22 +4,17 @@ import { CREATE_HOLES,
           PREV_HOLE,
           ADD_HOLE_STAT_ID } from '../actionTypes'
 
-
 const DEFAULT_STATE = {
   
 }
 
 export default (state = DEFAULT_STATE, action) => {
-  console.log(state)
-  console.log(action)
+ 
   switch (action.type) {
     case CREATE_HOLES:
       return (!state.holes ? Object.assign({}, state, {holes: action.Newholes})
               : Object.assign({}, state))
     case ADD_CURRENT_HOLE: {
-      // console.log(deepCopy(state.holes))
-      // console.log({holes: deepCopy(state.hole)} === state)
-      console.log(state)
       return (Object.assign({}, {holes: deepCopy(state.holes)}, {currentHole: action.currentHole}))
              
     }

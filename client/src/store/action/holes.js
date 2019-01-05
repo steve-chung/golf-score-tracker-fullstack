@@ -42,7 +42,6 @@ export function saveHoles(holes) {
   return dispatch => {
     return new Promise((resolve, reject) => {
       setToken('accessToken')
-      console.log(holes)
       return apiCall('post', '/api/holes', holes)
         .then((newHoles) => {
           holes.holes = newHoles
@@ -63,16 +62,3 @@ export function saveHoles(holes) {
     })
   }
 }
-
-
-
-// export function moveNextHole(holes, holeNow) {
-//   return dispatch => {
-//     console.log(holes)
-//     if (nextHole !== 18) {
-//       dispatch(nextHole(holes[holeNow]))
-//     } else {
-//       dispatch(nextHole(holes['17']))
-//     }
-//   }
-// }

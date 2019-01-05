@@ -14,7 +14,6 @@ import { compose } from 'recompose'
 import { playGame } from '../store/action/game'
 import { saveHoles,
         addCurrentHole,
-        // callCurrentHole,
         prevHole,
         createHoles } from '../store/action/holes'
 import { createScoreServer,
@@ -82,7 +81,6 @@ class Score extends Component {
     this.props.playGame()
     let open = true
     const holes = localStorage.getItem('holes')
-    console.log(holes)
     const currentHole = localStorage.getItem('currentHole')
     if (holes) {
       open = false
@@ -114,8 +112,6 @@ class Score extends Component {
         game_id: gameId,
         holes: newHoles
       }
-      console.log(this.props)
-      console.log(game)
       this.props.saveHoles(game)
       this.setState({
         open: false
@@ -148,9 +144,7 @@ class Score extends Component {
       stroksGreen,
       totalShots
     }
-    
-      // this.props.addCurrentHole(holes.holes[0])
-    
+  
     playerScore.hole_id = holes.currentHole.holeId
     const currentHoleIndex = holes.currentHole.holeNumber - 1
     const newHole = holes.currentHole.holeNumber
@@ -160,7 +154,6 @@ class Score extends Component {
     localStorage.setItem('totalScore', JSON.stringify(totalScore))
 
     this.props.addCurrentHole(holes.holes[newHole])
-    console.log(playerScore)
     if (!holes.holes[currentHoleIndex].stat_id) {
       this.props.createScoreServer(playerScore)
     } else if (currentHoleIndex === 17) {
@@ -172,86 +165,15 @@ class Score extends Component {
     }
     localStorage.setItem('score', JSON.stringify(playerScore))
     localStorage.setItem('currentHole', JSON.stringify(holes.holes[newHole]))
-    // localStorage.getItem('totalScore')
-    // localStorage.setItem('totalScore', totalScore)
-    // this.props.nextHole()
-    
-    // const updatedPlayers = this.handleUpdatePlayer(playerNowObj, players, currentPlayer.id, playerScore, playerNow, holeIndex)
-    // const nextHole = holes.indexOf(currentHole) + 1
-
-    // if (nextPlayerIndex === players.length) {
-    //   this.setState({
-    //     players: updatedPlayers,
-    //     currentHole: holes[nextHole],
-    //     currentPlayer: players[0]
-    //   })
-    //   if (nextHole === 18) {
-    //     this.props.history.push('/')
-    //     localStorage.clear()
-    //   }
-    // }
-    // else {
-    //   this.setState({
-    //     players: updatedPlayers,
-    //     currentPlayer: players[nextPlayerIndex]
-    //   })
-    // }
-    // parsed.currentPlayer = currentPlayer
-    // localStorage.setItem('localData', JSON.stringify(parsed))
-    // this.handlePutScores(updatedPlayers)
   }
 
-  // handlePutScores(players) {
-  //   const { gameId, courseName, date } = this.state
-
-  //   fetch(`/data/games/${gameId}`, {method: 'PUT',
-  //     headers: {
-  //       'Accept': 'application/json',
-  //       'Content-Type': 'application/json'
-  //     },
-  //     body: JSON.stringify({course: courseName, date: date, players: players})})
-  //     .then(res => res.json())
-  //     .then(res =>
-  //       console.log(res))
-  //     .catch(err =>
-  //       console.error(err))
-
-  // }
-
   handleOnPrev(e) {
-    // const { players, currentHole, currentPlayer } = this.state
     const { holes } = this.props
-    console.log(holes.currentHole)
-    const gameId = this.props.game.id
     const currentHoleIndex = holes.currentHole.holeNumber - 1
     let newHole
     newHole = currentHoleIndex > -1 ? currentHoleIndex - 1 : 0
-    console.log(holes.holes[newHole])
     this.props.addCurrentHole(holes.holes[newHole])
     this.props.getScoreServer(holes.holes[newHole].stat_id)
-    // if (!holeIndex) {
-    //   holeIndex = 0
-    // }
-    // else {
-    //   if (!playerIndex) {
-    //     holeIndex--
-    //   }
-    //   else {
-    //     holeIndex = currentHole
-    //   }
-    // }
-
-    // if (playerIndex > 0) {
-    //   playerIndex--
-    // }
-    // else {
-    //   playerIndex = 0
-    // }
-
-    // this.setState({
-    //   currentHole: newHoles[holeIndex],
-    //   currentPlayer: players[playerIndex]
-    // })
   }
 
   handleCancel(e) {
@@ -266,14 +188,11 @@ class Score extends Component {
     if (holes.holes) {
       localStorage.setItem('holes', JSON.stringify(holes))
     }
-    console.log(this.props)
-    console.log(this.state.open)
     return (
       <div className='container' style={{margin: '0, auto'}}>
         <Dialog
           open={this.state.open}
           TransitionComponent={Transition}
-          // keepMounted
           onClose={this.handleClose}
           aria-labelledby="alert-dialog-slide-title"
           aria-describedby="alert-dialog-slide-description">

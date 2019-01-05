@@ -12,6 +12,7 @@ class PlayGame(Resource):
     user_email = get_jwt_identity()
     user = UserModel.find_by_email(user_email)
     play_game = GameModel.find_by_latest(user.id)
+    print(play_game)
     if play_game:
       return {
         'game_id': play_game.id,

@@ -86,10 +86,8 @@ class StatPost(Resource):
     user = UserModel.find_by_email(user_email)
     hole_id = data['hole_id']
     game_id = data['game_id']
-    print('hole_id {}, game_id {}'.format(hole_id, game_id))
     found_stat = ScoresModel.find_by_hole_id(hole_id, game_id)
     new_game = GameModel.find_by_id(game_id)
-    print(found_stat)
     if found_stat.stat_id != None :
       return {'message': 'Stat {} is already exists.'.format(found_stat.stat_id)}, 500
     firstClub = data['firstClub']
@@ -104,11 +102,8 @@ class StatPost(Resource):
                            secondClub=secondClub, secondDistance=secondDistance, stroksGreen=stroksGreen,
                            totalShot=totalShots)
       new_stat.save_to_db()
-      print(new_stat.id)
       ScoresModel.update_stat_id(
         user_id=user.id, game_id=game_id, hole_id=hole_id, stat_id=new_stat.id)
-      print(new_game.total_score)
-      print(totalScore)
       new_game.total_score = totalScore
     
       db.session.commit()
