@@ -168,7 +168,7 @@ class Score extends Component {
       localStorage.clear()
       return
     } else {
-      this.props.getScoreServer(holes.holes[newHole].stat_id, playerScore)
+      this.props.getScoreServer(holes.holes[newHole].stat_id)
     }
     localStorage.setItem('score', JSON.stringify(playerScore))
     localStorage.setItem('currentHole', JSON.stringify(holes.holes[newHole]))
@@ -220,13 +220,15 @@ class Score extends Component {
 
   handleOnPrev(e) {
     // const { players, currentHole, currentPlayer } = this.state
-    const { holes } = this.props.holes
+    const { holes } = this.props
+    console.log(holes.currentHole)
     const gameId = this.props.game.id
-    const currentHoleIndex = holes.currentHole.holeNumber - 2
+    const currentHoleIndex = holes.currentHole.holeNumber - 1
     let newHole
-    newHole = currentHoleIndex > -1 ? holes.currentHole.holeNumber - 1 : 0
-    const currentHole = holes.holes[newHole]
-    this.props.getScoreServer(currentHole.hole_id, gameId)
+    newHole = currentHoleIndex > -1 ? currentHoleIndex - 1 : 0
+    console.log(holes.holes[newHole])
+    this.props.addCurrentHole(holes.holes[newHole])
+    this.props.getScoreServer(holes.holes[newHole].stat_id)
     // if (!holeIndex) {
     //   holeIndex = 0
     // }
@@ -258,8 +260,8 @@ class Score extends Component {
     })
   }
   render() {
-    const { currentPlayer, currentHole } = this.state
-    const { holes } = this.props
+    const { holes, score } = this.props
+    const { currentHole } = this.props.holes
     const { courseName } = this.props.game
     if (holes.holes) {
       localStorage.setItem('holes', JSON.stringify(holes))
@@ -294,8 +296,8 @@ class Score extends Component {
         </Dialog>
         <h1 className='title'>Welcome to {courseName}</h1>
         <ScoreCard
-          currentPlayer={currentPlayer}
           currentHole={currentHole}
+          score = {score}
           handleOnNext={this.handleOnNext}
           handleOnPrev={this.handleOnPrev}/>
       </div>
@@ -316,7 +318,6 @@ export default compose(withStyles(styles),
                                playGame,
                               saveHoles,
                               addCurrentHole,
-                              // moveNextHole,
                               createHoles,
                               prevHole,
                               createScoreServer,

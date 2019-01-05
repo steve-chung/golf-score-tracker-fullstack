@@ -51,12 +51,13 @@ export function createScoreServer(score) {
   }
 }
 
-export function getScoreServer(stat_id, game_id) {
+export function getScoreServer(stat_id) {
   return dispatch => {
     return new Promise((resolve, reject) => {
       setToken('accessToken')
-      return apiCall('get', `/api/stat/${stat_id}/${game_id}`)
+      return apiCall('get', `/api/stat/${stat_id}`)
         .then(newScore => {
+          console.log(newScore)
           dispatch(getScore(newScore))
           localStorage.setItem('score', JSON.stringify(newScore))
           resolve()

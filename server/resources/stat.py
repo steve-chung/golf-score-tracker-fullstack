@@ -35,9 +35,9 @@ parser.add_argument(
 
 class Stat(Resource):
 
-  def get(self, stat_id, game_id):
+  def get(self, stat_id):
     stat = StatModel.find_by_id(stat_id)
-    game = GameModel.find_by_id(game_id)
+    # game = GameModel.find_by_id(game_id)
 
     if stat:
       return {

@@ -44,7 +44,9 @@ class createHoles(Resource):
             new_holes.hole.append(user)
             db.session.add(new_score)
             db.session.commit()
-            new_hole_dict = {'holeId': new_holes.id, 'holeNumber': new_holes.hole_number}
+            new_hole_dict = {'holeId': new_holes.id, 
+                              'holeNumber': new_holes.hole_number,
+                              'par': new_holes.par}
             holes_json.append(new_hole_dict)
         return holes_json, 200
       except Exception as e:
