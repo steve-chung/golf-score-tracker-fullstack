@@ -16,10 +16,12 @@ parser.add_argument(
     'holes', action='append', help='This field cannot be blank', required=True)
 
 class createHoles(Resource):
-  @fresh_jwt_required
+  @jwt_required
   def post(self):
     data = parser.parse_args()
     user_email = get_jwt_identity()
+    print(data)
+    print(user_email)
     user = UserModel.find_by_email(user_email)
     holes = data['holes']
     game_id = data['game_id']
@@ -42,7 +44,9 @@ class createHoles(Resource):
             new_holes.hole.append(user)
             db.session.add(new_score)
             db.session.commit()
-            new_hole_dict = {'holeId': new_holes.id, 'holeNumber': new_holes.hole_number}
+            new_hole_dict = {'holeId': new_holes.id, 
+                              'holeNumber': new_holes.hole_number,
+                              'par': new_holes.par}
             holes_json.append(new_hole_dict)
         return holes_json, 200
       except Exception as e:

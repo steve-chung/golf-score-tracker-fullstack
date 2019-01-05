@@ -68,13 +68,12 @@ class scoreCard extends Component {
 
   handlePrev(e) {
     this.props.handleOnPrev(e)
-    const {currentPlayer} = this.props
     const { firstClub,
       secondClub,
       stroksGreen,
       firstDistance,
       secondDistance,
-      totalShots } = currentPlayer.hole[0]
+      totalShots } = this.props.score
 
     this.setState({
       firstClub,
@@ -109,8 +108,8 @@ class scoreCard extends Component {
   }
 
   componentDidMount() {
-    const {currentPlayer} = this.props
-    if (!currentPlayer) {
+    const {currentHole} = this.props
+    if (!currentHole) {
       this.handleRestState()
     }
   }
@@ -123,10 +122,8 @@ class scoreCard extends Component {
 
   render() {
     const { classes } = this.props
-    let currentPlayer = ' '
     let currentHole = 1
-    if (this.props.currentPlayer) {
-      currentPlayer = this.props.currentPlayer
+    if (this.props.currentHole) {
       currentHole = this.props.currentHole
     }
 
@@ -135,8 +132,7 @@ class scoreCard extends Component {
         <CssBaseline />
         <main className={classes.layout} style={{margin: '0, auto'}}>
           <Paper className={classes.paper} elevation={1}>
-            <h2> {currentPlayer.name} play </h2>
-            <h3> Hole {Object.keys(currentHole)[0]}/ Par {Object.values(currentHole)} </h3>
+            <h3> Hole {currentHole.holeNumber}/ Par {currentHole.par} </h3>
             <form onSubmit={this.handleOnSubmit}>
               <TextField
                 select

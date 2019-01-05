@@ -9,6 +9,16 @@ import {
   Slide} from '@material-ui/core'
 import { withStyles } from '@material-ui/core/styles'
 import ScoreCard from '../container/scoreCard'
+import { connect } from 'react-redux'
+import { compose } from 'recompose'
+import { playGame } from '../store/action/game'
+import { saveHoles,
+        addCurrentHole,
+        // callCurrentHole,
+        prevHole,
+        createHoles } from '../store/action/holes'
+import { createScoreServer,
+         getScoreServer } from '../store/action/scores'
 
 function Transition(props) {
   return <Slide direction="up" {...props} />
@@ -69,47 +79,20 @@ class Score extends Component {
   }
 
   componentDidMount() {
-    fetch('/data/games', {method: 'GET'})
-      .then(res => res.json())
-      .then(res => {
-        let newPlayers = [ ]
-        let currentHole = 1
-        const lastCourse = res.length - 1
-        let open = true
-        for (let i = 0; i < res[lastCourse].players.length; i++) {
-          newPlayers.push(res[lastCourse].players[i])
-        }
-        let localData = localStorage.getItem('localData')
-        const parsed = JSON.parse(localData)
-        let currentPlayer = res[lastCourse].players[0]
-        let newHoles = null
-        if (parsed) {
-          open = false
-          currentPlayer = parsed.currentPlayer
-          if (res[lastCourse].players[0].hole) {
-            const lastHoleIndex = res[lastCourse].players[0].hole.length
-            currentHole = parsed.holes[lastHoleIndex]
-          }
-          else {
-            currentHole = parsed.holes[0]
-          }
-          newHoles = parsed.holes
-        }
+    this.props.playGame()
+    let open = true
+    const holes = localStorage.getItem('holes')
+    console.log(holes)
+    const currentHole = localStorage.getItem('currentHole')
+    if (holes) {
+      open = false
+      this.props.createHoles(JSON.parse(holes).holes)
+      this.props.addCurrentHole(JSON.parse(currentHole))
+    }
 
-        this.setState({
-          players: newPlayers,
-          open: open,
-          date: res[lastCourse].date,
-          courseName: res[lastCourse].course,
-          currentPlayer: currentPlayer,
-          currentHole,
-          holes: newHoles,
-          gameId: res[lastCourse].id
-        })
-      })
-      .catch(err => {
-        console.error(err)
-      })
+    this.setState({
+      open: open
+    })
   }
 
   handleClose(e) {
@@ -126,16 +109,17 @@ class Score extends Component {
         eachHole[hole] = +e.target[i].value
         return eachHole
       })
-      this.setState({
-        open: false,
-        holes: newHoles,
-        currentHole: newHoles[0]
-      })
-      let localData = {
-        open: false,
+      const gameId = this.props.game.id
+      const game = {
+        game_id: gameId,
         holes: newHoles
       }
-      localStorage.setItem('localData', JSON.stringify(localData))
+      console.log(this.props)
+      console.log(game)
+      this.props.saveHoles(game)
+      this.setState({
+        open: false
+      })
     }
     e.target.reset()
   }
@@ -152,9 +136,11 @@ class Score extends Component {
   }
 
   handleOnNext(firstClub, firstDistance, secondClub, secondDistance, stroksGreen, totalShots) {
-    const { currentHole, players, currentPlayer, holes } = this.state
+    const { holes } = this.props
+    let totalScore
+    const gameId = this.props.game.id
     const playerScore = {
-      hole: currentHole,
+      game_id: gameId,
       firstClub,
       firstDistance,
       secondClub,
@@ -162,101 +148,110 @@ class Score extends Component {
       stroksGreen,
       totalShots
     }
-    const holeIndex = Object.keys(playerScore.hole)[0] - 1
-    let newHole = []
-    newHole.push(playerScore)
-    const nextPlayerIndex = players.indexOf(currentPlayer) + 1
-    let playerNow = players.filter(player => (
-      player.id === currentPlayer.id))
-    let playerNowObj = {}
-    if (!playerNow[0].hole) {
-      playerNow[0].hole = newHole
-      playerNow[0].totalScore = +playerScore.totalShots
-      playerNowObj = playerNow[0]
-    }
-    else if (JSON.stringify(playerNow[0].hole[holeIndex]) !== JSON.stringify(playerScore)) {
-      if (JSON.stringify(playerNow[0].hole[holeIndex]) === undefined) {
-        playerNow[0].hole.push(playerScore)
-        playerNow[0].totalScore += +playerScore.totalShots
-      }
-      else {
-        playerNow[0].hole[holeIndex] = playerScore
-        playerNow[0].totalScore += +playerScore.totalShots
-      }
-      playerNowObj = playerNow[0]
-    }
-    const updatedPlayers = this.handleUpdatePlayer(playerNowObj, players, currentPlayer.id, playerScore, playerNow, holeIndex)
-    const nextHole = holes.indexOf(currentHole) + 1
-    const localData = localStorage.getItem('localData')
-    let parsed = JSON.parse(localData)
+    
+      // this.props.addCurrentHole(holes.holes[0])
+    
+    playerScore.hole_id = holes.currentHole.holeId
+    const currentHoleIndex = holes.currentHole.holeNumber - 1
+    const newHole = holes.currentHole.holeNumber
+    totalScore = JSON.parse(localStorage.getItem('totalScore'))
+    totalScore = !totalScore ? +playerScore.totalShots : +totalScore + playerScore.totalShots
+    playerScore.totalScore = totalScore
+    localStorage.setItem('totalScore', JSON.stringify(totalScore))
 
-    if (nextPlayerIndex === players.length) {
-      this.setState({
-        players: updatedPlayers,
-        currentHole: holes[nextHole],
-        currentPlayer: players[0]
-      })
-      if (nextHole === 18) {
-        this.props.history.push('/')
-        localStorage.clear()
-      }
+    this.props.addCurrentHole(holes.holes[newHole])
+    console.log(playerScore)
+    if (!holes.holes[currentHoleIndex].stat_id) {
+      this.props.createScoreServer(playerScore)
+    } else if (currentHoleIndex === 17) {
+      this.props.history.push('/')
+      localStorage.clear()
+      return
+    } else {
+      this.props.getScoreServer(holes.holes[newHole].stat_id)
     }
-    else {
-      this.setState({
-        players: updatedPlayers,
-        currentPlayer: players[nextPlayerIndex]
-      })
-    }
-    parsed.currentPlayer = currentPlayer
-    localStorage.setItem('localData', JSON.stringify(parsed))
-    this.handlePutScores(updatedPlayers)
+    localStorage.setItem('score', JSON.stringify(playerScore))
+    localStorage.setItem('currentHole', JSON.stringify(holes.holes[newHole]))
+    // localStorage.getItem('totalScore')
+    // localStorage.setItem('totalScore', totalScore)
+    // this.props.nextHole()
+    
+    // const updatedPlayers = this.handleUpdatePlayer(playerNowObj, players, currentPlayer.id, playerScore, playerNow, holeIndex)
+    // const nextHole = holes.indexOf(currentHole) + 1
+
+    // if (nextPlayerIndex === players.length) {
+    //   this.setState({
+    //     players: updatedPlayers,
+    //     currentHole: holes[nextHole],
+    //     currentPlayer: players[0]
+    //   })
+    //   if (nextHole === 18) {
+    //     this.props.history.push('/')
+    //     localStorage.clear()
+    //   }
+    // }
+    // else {
+    //   this.setState({
+    //     players: updatedPlayers,
+    //     currentPlayer: players[nextPlayerIndex]
+    //   })
+    // }
+    // parsed.currentPlayer = currentPlayer
+    // localStorage.setItem('localData', JSON.stringify(parsed))
+    // this.handlePutScores(updatedPlayers)
   }
 
-  handlePutScores(players) {
-    const { gameId, courseName, date } = this.state
+  // handlePutScores(players) {
+  //   const { gameId, courseName, date } = this.state
 
-    fetch(`/data/games/${gameId}`, {method: 'PUT',
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({course: courseName, date: date, players: players})})
-      .then(res => res.json())
-      .then(res =>
-        console.log(res))
-      .catch(err =>
-        console.error(err))
+  //   fetch(`/data/games/${gameId}`, {method: 'PUT',
+  //     headers: {
+  //       'Accept': 'application/json',
+  //       'Content-Type': 'application/json'
+  //     },
+  //     body: JSON.stringify({course: courseName, date: date, players: players})})
+  //     .then(res => res.json())
+  //     .then(res =>
+  //       console.log(res))
+  //     .catch(err =>
+  //       console.error(err))
 
-  }
+  // }
 
   handleOnPrev(e) {
-    const { players, currentHole, currentPlayer } = this.state
-    const newHoles = this.state.holes
-    let playerIndex = players.indexOf(currentPlayer)
-    let holeIndex = newHoles.indexOf(currentHole)
-    if (!holeIndex) {
-      holeIndex = 0
-    }
-    else {
-      if (!playerIndex) {
-        holeIndex--
-      }
-      else {
-        holeIndex = currentHole
-      }
-    }
+    // const { players, currentHole, currentPlayer } = this.state
+    const { holes } = this.props
+    console.log(holes.currentHole)
+    const gameId = this.props.game.id
+    const currentHoleIndex = holes.currentHole.holeNumber - 1
+    let newHole
+    newHole = currentHoleIndex > -1 ? currentHoleIndex - 1 : 0
+    console.log(holes.holes[newHole])
+    this.props.addCurrentHole(holes.holes[newHole])
+    this.props.getScoreServer(holes.holes[newHole].stat_id)
+    // if (!holeIndex) {
+    //   holeIndex = 0
+    // }
+    // else {
+    //   if (!playerIndex) {
+    //     holeIndex--
+    //   }
+    //   else {
+    //     holeIndex = currentHole
+    //   }
+    // }
 
-    if (playerIndex > 0) {
-      playerIndex--
-    }
-    else {
-      playerIndex = 0
-    }
+    // if (playerIndex > 0) {
+    //   playerIndex--
+    // }
+    // else {
+    //   playerIndex = 0
+    // }
 
-    this.setState({
-      currentHole: newHoles[holeIndex],
-      currentPlayer: players[playerIndex]
-    })
+    // this.setState({
+    //   currentHole: newHoles[holeIndex],
+    //   currentPlayer: players[playerIndex]
+    // })
   }
 
   handleCancel(e) {
@@ -265,13 +260,20 @@ class Score extends Component {
     })
   }
   render() {
-    const { courseName, currentPlayer, currentHole } = this.state
+    const { holes, score } = this.props
+    const { currentHole } = this.props.holes
+    const { courseName } = this.props.game
+    if (holes.holes) {
+      localStorage.setItem('holes', JSON.stringify(holes))
+    }
+    console.log(this.props)
+    console.log(this.state.open)
     return (
       <div className='container' style={{margin: '0, auto'}}>
         <Dialog
           open={this.state.open}
           TransitionComponent={Transition}
-          keepMounted
+          // keepMounted
           onClose={this.handleClose}
           aria-labelledby="alert-dialog-slide-title"
           aria-describedby="alert-dialog-slide-description">
@@ -294,8 +296,8 @@ class Score extends Component {
         </Dialog>
         <h1 className='title'>Welcome to {courseName}</h1>
         <ScoreCard
-          currentPlayer={currentPlayer}
           currentHole={currentHole}
+          score = {score}
           handleOnNext={this.handleOnNext}
           handleOnPrev={this.handleOnPrev}/>
       </div>
@@ -303,4 +305,20 @@ class Score extends Component {
   }
 }
 
-export default withStyles(styles)(Score)
+function mapStateToProps(state) {
+  return {
+    game: state.game,
+    holes: state.holes,
+    score: state.scores
+  }
+}
+
+export default compose(withStyles(styles),
+                      connect(mapStateToProps, {
+                               playGame,
+                              saveHoles,
+                              addCurrentHole,
+                              createHoles,
+                              prevHole,
+                              createScoreServer,
+                              getScoreServer }))(Score)

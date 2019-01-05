@@ -15,7 +15,7 @@ import { updateGame,
         removeGame,
         addGame,
         updateLastId,
-        deleteId, 
+        deleteId,
         resetGame,
         resetDeleteId } from '../store/action/game'
 import { fetched } from '../store/action/fetch'

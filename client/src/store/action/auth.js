@@ -42,6 +42,7 @@ export function logout() {
         .then(({ message }) => {
           cookies.remove('accessToken')
           cookies.remove('refreshToken')
+          localStorage.clear()
           setAuthorizationToken(false, false)
           dispatch(setCurrentUserDefault())
           dispatch(setMessage(message))

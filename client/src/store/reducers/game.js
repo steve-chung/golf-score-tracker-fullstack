@@ -4,7 +4,8 @@ import { ADD_GAME,
         UPDATE_LAST_ID, 
         UPDATE_DELETE_ID,
         RESET_GAME,
-        RESET_DELETE_ID } from '../actionTypes'
+        RESET_DELETE_ID,
+        PLAY_GAME } from '../actionTypes'
 
 const DEFAULT_STATE = {
   courseName: '',
@@ -54,6 +55,13 @@ export default (state = DEFAULT_STATE, action) => {
     case RESET_DELETE_ID:
       return Object.assign({}, state, {
         deletePlayerID: 0
+      })
+
+    case PLAY_GAME:
+      return Object.assign({}, state, {
+        courseName: action.game.courseName,
+        id: action.game.id,
+        date: action.game.date
       })
     default:
       return state
