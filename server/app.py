@@ -152,7 +152,7 @@ api.add_resource(PlayGame, '/api/playGame')
 api.add_resource(StatPost, '/api/stat')
 api.add_resource(Stat, '/api/stat/<int:stat_id>')
 api.add_resource(StatPut, '/api/stat/<int:stat_id>')
-api.add_resource(StatView, '/api/stat/view/<int:user_id>')
+api.add_resource(StatView, '/api/stat/view')
 app.after_request(sql_debug)
 
 

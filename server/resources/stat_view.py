@@ -5,6 +5,7 @@ from sqlalchemy.engine import reflection
 from ast import literal_eval
 from flask_jwt_extended import get_jwt_identity,  jwt_required
 from flask import jsonify
+from models.user import UserModel
 
 metadata = db.MetaData(db.engine)
 def init_table(name):
@@ -12,15 +13,17 @@ def init_table(name):
 
 class StatView(Resource):
   @jwt_required
-  def get(self, user_id):
+  def get(self):
     insp = reflection.Inspector.from_engine(db.engine) 
     print(insp.get_view_names())
+    user_email = get_jwt_identity()
+    user = UserModel.find_by_email(user_email)
     res_stat = []
     MyView = db.Table("stat_by_date", metadata,
                       db.Column("score_id", db.Integer, primary_key=True), 
                       extend_existing=True, autoload=True)
     try:
-      query = MyView.select().order_by(MyView.c.date).where(MyView.c.user_id == user_id)
+      query = MyView.select().order_by(MyView.c.date).where(MyView.c.user_id == user.id)
       results = db.engine.execute(query)
       if not results:
         return {

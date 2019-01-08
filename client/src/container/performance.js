@@ -2,6 +2,9 @@ import React, { Component, Fragment } from 'react'
 import { Paper, Tabs, Tab, AppBar } from '@material-ui/core'
 import BarChart from '../component/graph'
 import { withStyles } from '@material-ui/core/styles'
+import { connect } from 'react-redux'
+import { compose } from 'recompose'
+import { getStatServer } from '../store/action/stat'
 
 const styles = theme => ({
   layout: {
@@ -35,50 +38,51 @@ class Performance extends Component {
   }
 
   componentDidMount() {
-    const date = Date.now()
-    fetch('/data/games', {method: 'GET'})
-      .then(res => res.json())
-      .then(res => {
-        const history = res.filter(coures => (
-          coures.date < date)).map(course => {
-          let courseObj = {}
-          let initObj = {}
-          const scoreStat = course.players[0].hole.reduce((acc, hole) => {
-            let count = 0
-            if (!acc[hole.firstClub]) {
-              acc[hole.firstClub] = +hole.firstDistance
-              acc.count = Object.assign(initObj, {[hole.firstClub]: 1})
-            }
-            else {
-              acc[hole.firstClub] += +hole.firstDistance
-              count = acc.count[hole.firstClub] + 1
-              acc.count = Object.assign(acc.count, {[hole.firstClub]: count})
-            }
-            if (!acc[hole.secondClub]) {
-              acc[hole.secondClub] = +hole.secondDistance
-              acc.count = Object.assign(initObj, {[hole.secondClub]: 1})
-            }
-            else {
-              count = acc.count[hole.secondClub] + 1
-              acc[hole.secondClub] += +hole.secondDistance
-              acc.count = Object.assign(acc.count, {[hole.secondClub]: count})
-            }
-            acc.puttsGreen += +hole.stroksGreen
-            return acc
-          }, {puttsGreen: 0})
-          courseObj = Object.assign({},
-            {id: course.id,
-              date: course.date,
-              playerName: course.players[0].name,
-              scores: +course.players[0].totalScore,
-              scoreStats: scoreStat})
-          return courseObj
-        })
-        this.averageData(history)
-      })
-      .catch(err => {
-        console.error(err)
-      })
+    // const date = Date.now()
+    // fetch('/data/games', {method: 'GET'})
+    //   .then(res => res.json())
+    //   .then(res => {
+    //     const history = res.filter(coures => (
+    //       coures.date < date)).map(course => {
+    //       let courseObj = {}
+    //       let initObj = {}
+    //       const scoreStat = course.players[0].hole.reduce((acc, hole) => {
+    //         let count = 0
+    //         if (!acc[hole.firstClub]) {
+    //           acc[hole.firstClub] = +hole.firstDistance
+    //           acc.count = Object.assign(initObj, {[hole.firstClub]: 1})
+    //         }
+    //         else {
+    //           acc[hole.firstClub] += +hole.firstDistance
+    //           count = acc.count[hole.firstClub] + 1
+    //           acc.count = Object.assign(acc.count, {[hole.firstClub]: count})
+    //         }
+    //         if (!acc[hole.secondClub]) {
+    //           acc[hole.secondClub] = +hole.secondDistance
+    //           acc.count = Object.assign(initObj, {[hole.secondClub]: 1})
+    //         }
+    //         else {
+    //           count = acc.count[hole.secondClub] + 1
+    //           acc[hole.secondClub] += +hole.secondDistance
+    //           acc.count = Object.assign(acc.count, {[hole.secondClub]: count})
+    //         }
+    //         acc.puttsGreen += +hole.stroksGreen
+    //         return acc
+    //       }, {puttsGreen: 0})
+    //       courseObj = Object.assign({},
+    //         {id: course.id,
+    //           date: course.date,
+    //           playerName: course.players[0].name,
+    //           scores: +course.players[0].totalScore,
+    //           scoreStats: scoreStat})
+    //       return courseObj
+    //     })
+    //     this.averageData(history)
+    //   })
+    //   .catch(err => {
+    //     console.error(err)
+    //   })
+    this.props.getStatServer()
   }
 
   averageData(golfStat) {
@@ -186,4 +190,14 @@ class Performance extends Component {
   }
 }
 
-export default withStyles(styles)(Performance)
+function mapStateToProps(state) {
+  return {
+
+  }
+}
+
+
+export default compose(withStyles(styles), 
+                connect(mapStateToProps,
+                    {  getStatServer }))(Performance)
+
