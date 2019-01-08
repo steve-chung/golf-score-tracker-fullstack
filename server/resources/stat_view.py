@@ -8,7 +8,7 @@ from flask import jsonify
 
 metadata = db.MetaData(db.engine)
 def init_table(name):
-  return db.Table(name, meta, autoload = True, schema='public')
+  return db.Table(name, metadata, autoload = True, schema='public')
 
 class StatView(Resource):
   @jwt_required
@@ -25,7 +25,7 @@ class StatView(Resource):
       if not results:
         return {
             'message': 'The record is empty'
-        }
+        }, 204
       for result in results:
         # res_stat.append(result)
         stat = {}
@@ -35,9 +35,9 @@ class StatView(Resource):
             val = val.strftime('%b %d, %Y')
           stat[key] = val
         res_stat.append(stat)
-      return jsonify(res_stat)
+      return res_stat, 200
     except Exception as e :
       print(e)
       return {
         'message': 'Something went wrong!'
-      }
+      }, 501
