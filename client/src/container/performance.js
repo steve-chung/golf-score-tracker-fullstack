@@ -35,6 +35,7 @@ class Performance extends Component {
       value: 0
     }
     this.handleChange = this.handleChange.bind(this)
+    this.formatStat = this.formatStat.bind(this)
   }
 
   componentDidMount() {
@@ -83,15 +84,58 @@ class Performance extends Component {
     //     console.error(err)
     //   })
     this.props.getStatServer()
+    this.formatStat()
+  }
+
+  formatStat() {
+    const { stat } = this.props
+    console.log(stat)
+    const date = Date.now()
+    const history = stat.filter(course => (
+      course.date < date)).map(course => {
+      let courseObj = {}
+      let initObj = {}
+      console.log(course.date)
+      // const scoreStat = course.players[0].hole.reduce((acc, hole) => {
+      //   let count = 0
+      //   if (!acc[hole.firstClub]) {
+      //     acc[hole.firstClub] = +hole.firstDistance
+      //     acc.count = Object.assign(initObj, {[hole.firstClub]: 1})
+      //   }
+      //   else {
+      //     acc[hole.firstClub] += +hole.firstDistance
+      //     count = acc.count[hole.firstClub] + 1
+      //     acc.count = Object.assign(acc.count, {[hole.firstClub]: count})
+      //   }
+      //   if (!acc[hole.secondClub]) {
+      //     acc[hole.secondClub] = +hole.secondDistance
+      //     acc.count = Object.assign(initObj, {[hole.secondClub]: 1})
+      //   }
+      //   else {
+      //     count = acc.count[hole.secondClub] + 1
+      //     acc[hole.secondClub] += +hole.secondDistance
+      //     acc.count = Object.assign(acc.count, {[hole.secondClub]: count})
+      //   }
+      //   acc.puttsGreen += +hole.stroksGreen
+      //   return acc
+      // }, {puttsGreen: 0})
+      // courseObj = Object.assign({},
+      //   {id: course.id,
+      //     date: course.date,
+      //     playerName: course.players[0].name,
+      //     scores: +course.players[0].totalScore,
+      //     scoreStats: scoreStat})
+      // return courseObj
+    })
+    this.averageData(history)
   }
 
   averageData(golfStat) {
-
     const finalStat = golfStat.map(stat => {
       let date = new Date(stat.date)
       let averageStat = {}
       for (let key in stat.scoreStats) {
-        if (key === 'puttsGreen') {
+        if (key === 'stroks_green') {
           averageStat.puttsGreen = (stat.scoreStats[key] / 18).toFixed(2)
         }
         else if (key !== 'count') {
@@ -114,8 +158,9 @@ class Performance extends Component {
   }
 
   render() {
-    const { classes } = this.props
+    const { classes, stat } = this.props
     const { value } = this.state
+    // this.formatStat(stat)
     return (
       <Fragment>
         <AppBar position="static" color='default'>
@@ -192,7 +237,7 @@ class Performance extends Component {
 
 function mapStateToProps(state) {
   return {
-
+      stat: state.stat
   }
 }
 

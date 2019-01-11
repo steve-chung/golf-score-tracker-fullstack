@@ -19,6 +19,10 @@ class StatView(Resource):
     user_email = get_jwt_identity()
     user = UserModel.find_by_email(user_email)
     res_stat = []
+    perform_stat = []
+    results_set = []
+    date_stat = {}
+    
     MyView = db.Table("stat_by_date", metadata,
                       db.Column("score_id", db.Integer, primary_key=True), 
                       extend_existing=True, autoload=True)
@@ -29,16 +33,28 @@ class StatView(Resource):
         return {
             'message': 'The record is empty'
         }, 204
-      for result in results:
+      for row in results:
+        results_set.append(dict(row))
+      for idx, result in enumerate(results_set):
         # res_stat.append(result)
         stat = {}
+        date = result['date'].strftime('%b %d, %Y')
+        if idx > 0 and result['date'] != results_set[idx-1]['date']:
+          date = result['date'].strftime('%b %d, %Y')
+          res_stat=[]
+      
         for key, val in result.items():
-          if key == 'date':
-            print(val)
-            val = val.strftime('%b %d, %Y')
-          stat[key] = val
+          if key != 'date' and key != 'user_id':
+            stat[key] = val
         res_stat.append(stat)
-      return res_stat, 200
+        if idx == len(results_set)-1 or result['date'] != results_set[idx+1]['date']:
+          date_stat = {'date': date,
+                      'stats': res_stat}
+          perform_stat.append(date_stat)
+        print('perform_stat: {}'.format(perform_stat))
+        response = jsonify(perform_stat)
+        response.status_code = 200
+      return response
     except Exception as e :
       print(e)
       return {
