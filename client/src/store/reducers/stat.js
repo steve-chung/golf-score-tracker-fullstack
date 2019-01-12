@@ -1,10 +1,10 @@
 import { GET_STAT } from '../actionTypes'
 
 
-export default (state = [{test:0}], action) => {
+export default (state = null, action) => {
   switch (action.type) {
     case GET_STAT:
-      return action.stat
+      return action.perform
     default:
       return state
   }

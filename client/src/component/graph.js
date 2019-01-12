@@ -21,27 +21,31 @@ class BarChart extends Component {
     const height = this.props.size[1] - 2 * margin
     const width = this.props.size[0] - 2 * margin
     let yAxisLabel = ' '
-
+    let title = ' '
     switch (category) {
       case 'totalScore':
         yAxisLabel = 'Score'
+        title = 'Total Score'
         break
       case 'puttsGreen':
         yAxisLabel = 'Putts'
+        title = 'Avg Putts'
         break
       default:
         yAxisLabel = 'Yards'
+        title = category
         break
     }
+
     const svg = d3.select(node)
       .attr('transform', `translate(${margin}, ${margin})`)
-    const data = this.props.data.finalStat
+    const data = this.props.data
     let dataMax = 0
     if (category === 'totalScore') {
-      dataMax = Math.max.apply(null, this.props.data.finalStat.map(stat => stat.totalScore))
+      dataMax = Math.max.apply(null, data.map(stat => stat.totalScore))
     }
     else {
-      dataMax = Math.max.apply(null, this.props.data.finalStat.map(stat => stat.averageStat[category]))
+      dataMax = Math.max.apply(null, data.map(stat => stat.averageStat[category]))
     }
     const padding = 45
     const yScale = d3.scaleLinear()
@@ -185,7 +189,7 @@ class BarChart extends Component {
       .attr('x', width / 2 + margin)
       .attr('y', 18)
       .attr('text-anchor', 'middle')
-      .text(category)
+      .text(title)
 
   }
 

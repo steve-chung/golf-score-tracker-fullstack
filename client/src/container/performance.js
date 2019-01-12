@@ -35,122 +35,10 @@ class Performance extends Component {
       value: 0
     }
     this.handleChange = this.handleChange.bind(this)
-    this.formatStat = this.formatStat.bind(this)
   }
 
   componentDidMount() {
-    // const date = Date.now()
-    // fetch('/data/games', {method: 'GET'})
-    //   .then(res => res.json())
-    //   .then(res => {
-    //     const history = res.filter(coures => (
-    //       coures.date < date)).map(course => {
-    //       let courseObj = {}
-    //       let initObj = {}
-    //       const scoreStat = course.players[0].hole.reduce((acc, hole) => {
-    //         let count = 0
-    //         if (!acc[hole.firstClub]) {
-    //           acc[hole.firstClub] = +hole.firstDistance
-    //           acc.count = Object.assign(initObj, {[hole.firstClub]: 1})
-    //         }
-    //         else {
-    //           acc[hole.firstClub] += +hole.firstDistance
-    //           count = acc.count[hole.firstClub] + 1
-    //           acc.count = Object.assign(acc.count, {[hole.firstClub]: count})
-    //         }
-    //         if (!acc[hole.secondClub]) {
-    //           acc[hole.secondClub] = +hole.secondDistance
-    //           acc.count = Object.assign(initObj, {[hole.secondClub]: 1})
-    //         }
-    //         else {
-    //           count = acc.count[hole.secondClub] + 1
-    //           acc[hole.secondClub] += +hole.secondDistance
-    //           acc.count = Object.assign(acc.count, {[hole.secondClub]: count})
-    //         }
-    //         acc.puttsGreen += +hole.stroksGreen
-    //         return acc
-    //       }, {puttsGreen: 0})
-    //       courseObj = Object.assign({},
-    //         {id: course.id,
-    //           date: course.date,
-    //           playerName: course.players[0].name,
-    //           scores: +course.players[0].totalScore,
-    //           scoreStats: scoreStat})
-    //       return courseObj
-    //     })
-    //     this.averageData(history)
-    //   })
-    //   .catch(err => {
-    //     console.error(err)
-    //   })
     this.props.getStatServer()
-    this.formatStat()
-  }
-
-  formatStat() {
-    const { stat } = this.props
-    console.log(stat)
-    const date = Date.now()
-    const history = stat.filter(course => (
-      course.date < date)).map(course => {
-      let courseObj = {}
-      let initObj = {}
-      console.log(course.date)
-      // const scoreStat = course.players[0].hole.reduce((acc, hole) => {
-      //   let count = 0
-      //   if (!acc[hole.firstClub]) {
-      //     acc[hole.firstClub] = +hole.firstDistance
-      //     acc.count = Object.assign(initObj, {[hole.firstClub]: 1})
-      //   }
-      //   else {
-      //     acc[hole.firstClub] += +hole.firstDistance
-      //     count = acc.count[hole.firstClub] + 1
-      //     acc.count = Object.assign(acc.count, {[hole.firstClub]: count})
-      //   }
-      //   if (!acc[hole.secondClub]) {
-      //     acc[hole.secondClub] = +hole.secondDistance
-      //     acc.count = Object.assign(initObj, {[hole.secondClub]: 1})
-      //   }
-      //   else {
-      //     count = acc.count[hole.secondClub] + 1
-      //     acc[hole.secondClub] += +hole.secondDistance
-      //     acc.count = Object.assign(acc.count, {[hole.secondClub]: count})
-      //   }
-      //   acc.puttsGreen += +hole.stroksGreen
-      //   return acc
-      // }, {puttsGreen: 0})
-      // courseObj = Object.assign({},
-      //   {id: course.id,
-      //     date: course.date,
-      //     playerName: course.players[0].name,
-      //     scores: +course.players[0].totalScore,
-      //     scoreStats: scoreStat})
-      // return courseObj
-    })
-    this.averageData(history)
-  }
-
-  averageData(golfStat) {
-    const finalStat = golfStat.map(stat => {
-      let date = new Date(stat.date)
-      let averageStat = {}
-      for (let key in stat.scoreStats) {
-        if (key === 'stroks_green') {
-          averageStat.puttsGreen = (stat.scoreStats[key] / 18).toFixed(2)
-        }
-        else if (key !== 'count') {
-          averageStat[key] = (stat.scoreStats[key] / stat.scoreStats.count[key]).toFixed(2)
-        }
-      }
-      return Object.assign({}, {
-        date: date.toDateString(),
-        playerName: stat.playerName,
-        totalScore: stat.scores,
-        averageStat: averageStat})
-    })
-    this.setState({
-      finalStat
-    })
   }
 
   handleChange(event, value) {
@@ -160,7 +48,6 @@ class Performance extends Component {
   render() {
     const { classes, stat } = this.props
     const { value } = this.state
-    // this.formatStat(stat)
     return (
       <Fragment>
         <AppBar position="static" color='default'>
@@ -185,44 +72,44 @@ class Performance extends Component {
           </h2>
           <main className={classes.layout} style={{margin: '0, auto'}}>
             {value === 0 && <Paper className={classes.paper} elevation={1}>
-              { this.state.finalStat && <BarChart size={[600, 500]}
+              { stat && <BarChart size={[600, 500]}
                 style={{margin: 'auto'}}
-                data = {this.state}
+                data = {this.props.stat}
                 category = 'totalScore'>
               </BarChart> }
             </Paper>}
             {value === 1 && <Paper className={classes.paper} elevation={1}>
-              { this.state.finalStat && <BarChart size={[600, 500]}
+              { stat && <BarChart size={[600, 500]}
                 style={{margin: 'auto'}}
-                data = {this.state}
+                data = {this.props.stat}
                 category = 'Driver'>
               </BarChart> }
             </Paper>}
             {value === 2 && <Paper className={classes.paper} elevation={1}>
-              { this.state.finalStat && <BarChart size={[600, 500]}
+              { stat && <BarChart size={[600, 500]}
                 style={{margin: 'auto'}}
-                data = {this.state}
+                data = {this.props.stat}
                 category = '3-wood'>
               </BarChart> }
             </Paper>}
             {value === 3 && <Paper className={classes.paper} elevation={1}>
-              { this.state.finalStat && <BarChart size={[600, 500]}
+              { stat && <BarChart size={[600, 500]}
                 style={{margin: 'auto'}}
-                data = {this.state}
+                data = {this.props.stat}
                 category = '3-iron'>
               </BarChart> }
             </Paper>}
             {value === 4 && <Paper className={classes.paper} elevation={1}>
-              { this.state.finalStat && <BarChart size={[600, 500]}
+              { stat && <BarChart size={[600, 500]}
                 style={{margin: 'auto'}}
-                data = {this.state}
+                data = {this.props.stat}
                 category = '6-iron'>
               </BarChart> }
             </Paper>}
             {value === 5 && <Paper className={classes.paper} elevation={1}>
-              { this.state.finalStat && <BarChart size={[600, 500]}
+              { stat && <BarChart size={[600, 500]}
                 style={{margin: 'auto'}}
-                data = {this.state}
+                data = {this.props.stat}
                 category = 'puttsGreen'>
               </BarChart> }
             </Paper>}
@@ -240,7 +127,6 @@ function mapStateToProps(state) {
       stat: state.stat
   }
 }
-
 
 export default compose(withStyles(styles), 
                 connect(mapStateToProps,

@@ -36,7 +36,6 @@ class StatView(Resource):
       for row in results:
         results_set.append(dict(row))
       for idx, result in enumerate(results_set):
-        # res_stat.append(result)
         stat = {}
         date = result['date'].strftime('%b %d, %Y')
         if idx > 0 and result['date'] != results_set[idx-1]['date']:
@@ -51,7 +50,6 @@ class StatView(Resource):
           date_stat = {'date': date,
                       'stats': res_stat}
           perform_stat.append(date_stat)
-        print('perform_stat: {}'.format(perform_stat))
         response = jsonify(perform_stat)
         response.status_code = 200
       return response
